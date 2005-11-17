@@ -1,0 +1,53 @@
+/* links allgemein */
+a { 
+	text-decoration:none; 
+	color:blue;
+}
+
+/* pseudoklassen der links */
+a:hover { color:red;}
+
+/* haken hinter links */
+.vis {visibility:hidden;}
+a:hover .vis {
+	visibility:visible;
+	color:red
+}
+
+/*  container  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* *  hauptcontainer, zentriert mitte vert/hor * * * * * * * * * * * * * * * */
+#container{
+    width: 50em;
+    height: 30em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25em;
+    margin-top: -15em; 
+	padding:0.3em;
+	border: thin solid #708090;
+	background-color: White;
+}
+/* * * topcontainer, oben, hg  */
+#topcontainer {
+	width: 50em;
+	height: 6em;
+	padding:0em;
+	color:black;
+	background-color: #FFFFF0;
+	border: thin solid #708090;
+}
+
+#naviloop {
+	color:red;
+	background-color: green;
+}
+.tip {
+	background-color:red;
+}
+	
+#content {
+	background-color:red;
+}
+
+

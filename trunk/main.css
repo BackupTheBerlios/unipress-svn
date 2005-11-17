@@ -1,0 +1,18 @@
+.ok {
+	color:darkgreen;
+}
+.nok {
+	color:red;
+	font-weight:bold;
+}
+.errormsg {
+	font-size:10px;
+	color:darkred;
+}
+body {
+	font-family:verdana,arial,sans-serif;
+	font-size:12px;
+	line-height:16px;
+	color:black;
+	background-color:white;
+}

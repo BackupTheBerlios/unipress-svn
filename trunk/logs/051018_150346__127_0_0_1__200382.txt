@@ -1,0 +1,78 @@
+start debugmode (15:03:46 18.10.2005)
+caller IP: 127.0.0.1
+browser  : Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.7.12) Gecko/20051010 Firefox/1.0.7 (Ubuntu package 1.0.7)
+referer  : http://localhost/php/bsc/?menu=sites
+
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "menu" {STRING}
+            1 => "pg" {STRING}
+            2 => "" {STRING}
+        }
+    {VAR} menu from pg = "edits" {STRING}
+<-- init
+{VAR} act. menu = "edits" {STRING}
+{VAR} menu = {ARRAY} 
+    {
+        "main" {STRING} => "&amp;lt; Hauptmenue" {STRING}
+        "news" {STRING} => "&amp;gt; Neuer Bereich" {STRING}
+        "sites" {STRING} => "&amp;gt; Bereich Editieren" {STRING}
+    }
+{VAR} Request = {ARRAY} 
+    {
+        "menu" {STRING} => "edits" {STRING}
+        "id" {STRING} => "6" {STRING}
+    }
+{VAR} Files = {ARRAY} 
+    {
+    }
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "id" {STRING}
+            1 => "gp" {STRING}
+            2 => 0
+        }
+    {VAR} id from gp = "6" {STRING}
+<-- init
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "send" {STRING}
+        }
+    {VAR} send from pg = 0
+<-- init
+{VAR} _id = "6" {STRING}
+{VAR} _preset = NULL
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "name" {STRING}
+            1 => "p" {STRING}
+            2 => "" {STRING}
+        }
+    {VAR} name from p = "" {STRING}
+<-- init
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "kuerzel" {STRING}
+            1 => "p" {STRING}
+            2 => "" {STRING}
+        }
+    {VAR} kuerzel from p = "" {STRING}
+<-- init
+--> init
+    {ARGUMENTS} = {ARRAY} 
+        {
+            0 => "anew" {STRING}
+            1 => "p" {STRING}
+            2 => "nein" {STRING}
+        }
+    {VAR} anew from p = "nein" {STRING}
+<-- init
+
+runtime:  0,268 sec
+end debug (15:03:47 18.10.2005)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

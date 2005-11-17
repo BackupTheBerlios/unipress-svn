@@ -1,0 +1,24 @@
+
+
+
+
+#Fquelle {
+		z-index: 0;
+}
+#Fquelleneu {
+	   visibility: hidden;
+		float: left;
+		z-index: 0;
+}
+
+
+
+#sendbuttons {
+	
+	width:100%;text-align:right;padding:1px;
+}
+#link, #newsource {
+	border: thin dashed Gray;
+}
+
+
