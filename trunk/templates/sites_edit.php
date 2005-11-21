@@ -21,6 +21,8 @@ $send	=	init("send");
 // name, nicht leer, mind. 3 
 $Rname		= init("name","p","");
 $Rkuerzel	= init("kuerzel","p","");
+$Rhead		= init("head","p","");
+$Rfoot 		= init("foot","p","");
 $Ranew		= init("anew","p","nein");
 
 if ($id==0) {
@@ -28,9 +30,11 @@ if ($id==0) {
 	$what_to_do = "neu anlegen";
 	$preset['name'] = "";
 	$preset['kuerzel'] = "";
+	$preset['head']	= "";
+	$preset['foot'] = "";
 	$T->add_js_startup("document.forms[0].name.select();");
 	if ($send!=0) {
-		$new_id = $PSITE->add($Rname, $Rkuerzel);
+		$new_id = $PSITE->add($Rname, $Rkuerzel, $Rhead, $Rfoot);
 		if ($new_id == false) {
 			$formerror['main'] .= "Fehler: ".$PSITE->error_msg;
 		} else {
@@ -52,10 +56,10 @@ if ($id==0) {
 	// auch editiert?
 	$what_to_do = "editieren";
 	if ($send!=0) {
-		if ($PSITE->edit($id, $Rname, $Rkuerzel) == false) {
+		if ($PSITE->edit($id, $Rname, $Rkuerzel, $Rhead, $Rfoot) == false) {
 			$formerror['main'] .= "Fehler: ".$PSITE->error_msg;
 		} else {
-			$status = "Änderung erfolgreich.";
+			$status = "&Auml;nderung erfolgreich.";
 			//$preset	= $PSITE->get_info( $id );
 			$T->add_refresh(3,"?menu=sites");
 		}
@@ -69,7 +73,7 @@ if ($id==0) {
 
 
 // fill template head
-$T->add_title("Bereich ".$preset['name']." Ändern");
+$T->add_title("Bereich ".$preset['name']." ï¿½ndern");
 $T->add_js("js/site_check.js");
 $T->add_js("js/site_examples.js");
 $T->add_css("css/nentry.css");
@@ -91,7 +95,7 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											"label"=>"Bereichs<u>n</u>ame", 
 											"key"=>"n", 
 											"type"=>"text",
-											"help"=>"Bitte wählen Sie einen gut beschreibenden Namen.\nz. Bsp.: Institut für Sonnenforschung"
+											"help"=>"Bitte w&auml;hlen Sie einen gut beschreibenden Namen.\nz. Bsp.: Institut f&uuml;r Sonnenforschung"
 											),
 							$formerror[$name], 
 							$preset[$name]
@@ -99,23 +103,48 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 //Kuerzel
 $name = "kuerzel";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"<u>K</u>ürzel", 
+											"label"=>"<u>K</u>&uuml;rzel", 
 											"key"=>"k", 
 											"type"=>"text",
-											"help"=>"Vergeben Sie ein Kürzel. Unter diesem Kürzel wird später die Bereichsübersicht abrufbar sein.\nz. Bsp.: IFS",
+											"help"=>"Vergeben Sie ein K&uuml;rzel. Unter diesem K&uuml;rzel wird sp&auml;ter die Bereichs&uuml;bersicht abrufbar sein.\nz. Bsp.: IFS",
 										
 											) ,
 							$formerror[$name], 
 							$preset[$name]
 						);
+//Head
+$name = "head";
+$html['content']  .=	$T->form_row( array("name"=>$name, 
+											"label"=>"K<u>o</u>pfbereich (XHTML)", 
+											"key"=>"O", 
+											"type"=>"text",
+											"help"=>"Falls die Presseseite im Institutslayout erscheinen soll und nicht eingebunden wird, ist es notwendig, auf den Dokumentenkopf zu verweisen\nz. Bsp.: http://mein.institut.de/kopf.html",
+										
+											) ,
+							$formerror[$name], 
+							$preset[$name]
+						);
+//Foot
+$name = "foot";
+$html['content']  .=	$T->form_row( array("name"=>$name, 
+											"label"=>"<u>F</u>u&szlig;bereich (XHTML)", 
+											"key"=>"O", 
+											"type"=>"text",
+											"help"=>"Verweis auf den Dokumentfu&szlig;\nWeitere Informationen finden Sie in der Hilfe.\nz. Bsp.: http://mein.institut.de/fuss.html",
+										
+											) ,
+							$formerror[$name], 
+							$preset[$name]
+						);
+
 // another new entry? (if it is a new)
 if ($id==0) {
 	$name = "anew";
 	$html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"In dieser <u>M</u>aske bleiben?", 
+											"label"=>"Einen <u>w</u>eiteren Bereich anlegen?", 
 											"key"=>"m", 
 											"type"=>"yn_radio",
-											"help"=>"Falls Sie mehrere Bereiche anlegen wollen, wählen sie -Ja-, damit Sie nicht zur Übersicht umgeleitet werden.",
+											"help"=>"Falls Sie mehrere Bereiche anlegen wollen, w&auml;hlen sie -Ja-, damit Sie nicht zur &Uuml;bersicht umgeleitet werden.",
 										
 											) ,
 							$formerror[$name], 

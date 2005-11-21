@@ -8,7 +8,7 @@ if (!defined('CLASS_PRESS')) {
 
 	// I need MYSQL CLASS!
 	if (!defined('CLASS_MYSQL')) {
-		include ("mysql.class.php");
+		include ("cbmysql.class.php");
 	}
 
 

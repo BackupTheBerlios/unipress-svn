@@ -60,25 +60,27 @@ class press_sites
 	
 	// FIXME: if entry exists and you try to write it twice, you would got the old id
 	// otherwise -1
-	function add($name, $kuerzel) {
+	function add($name, $kuerzel, $head, $foot) {
 		if(is_object($this->DBG)) $this->DBG->enter_method();
 		
 		if ( empty( $this->conn ) ) {
 			error(0);
 		}
-		$name = stripcslashes(trim($name));
+		$name = clean_in($name);
 		if (strlen($name)<$this->min_name_len) {
 			$this->error_msg="Name zu kurz";
 			if(is_object($this->DBG))$this->DBG->leave_method($this->error_msg);
 			return false; // normal exit, name too short
 		}
 		// check if kuerzel exists
+		$kuerzel = clean_in($kuerzel);
 		if ($kuerzel!="" && $this->kuerzel_exists($kuerzel)==true) {
 			if(is_object($this->DBG))$this->DBG->leave_method(false);	
 			return false;
 		}
 		
-		$sql = "INSERT INTO ".$this->prefix."press_sites ( `id` , `name`, kuerzel ) VALUES ('', '".$name."', '".$kuerzel."')";
+		$sql = "INSERT INTO ".$this->prefix."press_sites ( id, name, kuerzel, head, foot ) " .
+				"VALUES ('', '".$name."', '".$kuerzel."', '".clean_in($head)."', '".clean_in($foot)."')";
 		//echo $sql;
 		$ret = $this->conn->insert( $sql );
 		
@@ -86,18 +88,19 @@ class press_sites
 		return $ret;
 	}
 
-	function edit($id, $name, $kuerzel) {
+	function edit($id, $name, $kuerzel, $head, $foot) {
 		if(is_object($this->DBG))$this->DBG->enter_method();
 		if ( empty( $this->conn ) ) {
 			error(0);
 		}
-		$name = stripcslashes(trim($name));
+		$name = clean_in($name);
 		if (strlen($name) < $this->min_name_len) {
 			$this->error_msg="Name zu kurz";
 			if(is_object($this->DBG))$this->DBG->leave_method($this->error_msg);
 			return false; // normal exit, name too short
 		}
 		// check if kuerzel exists
+		$kuerzel = clean_in($kuerzel);
 		if ($this->kuerzel_exists($kuerzel, $id)==true) return false;
 		
 		if ($this->get_name($id)==false) {
@@ -107,7 +110,9 @@ class press_sites
 		}
 
 		// update
-		$sql = "UPDATE ".$this->prefix."press_sites SET name='$name', kuerzel='$kuerzel' WHERE id=$id";
+		$sql = "UPDATE ".$this->prefix."press_sites SET name='$name', kuerzel='$kuerzel'" .
+				", head='".clean_in($head)."', foot='".clean_in($foot)."'" .
+				" WHERE id=$id";
 		if(is_object($this->DBG))$this->DBG->sql($sql);
 		$ret = $this->conn->update( $sql );
 		if(is_object($this->DBG))$this->DBG->watch_var("ret",$ret);

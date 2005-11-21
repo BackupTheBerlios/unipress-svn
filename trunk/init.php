@@ -40,7 +40,7 @@ define("LOCALHOSTIP","127.0.0.1");
 define("F_PATH", 'functions/');					// functions path
 
 define("I_PATH", 'include/');					// include path
-define("MYSQLFILE", 'mysql.class.php');			// mysql.class.file
+define("MYSQLFILE", 'cbmysql.class.php');			// mysql.class.file
 define("DEBUGGERFILE", 'cbdebug.class.php');	// debug.class.file
 define("DEBUGGER", 1);							// logfile Debugger 1=on/0=off
 define("INITFILE", 'init.inc.php');				// initializer for variables
@@ -129,7 +129,7 @@ if (in_array("mysql", $TODO)) {
 	
 	/* --------- press ---------------*/
 	// SQL
-	require(I_PATH."mysql.class.php");
+	require(I_PATH.MYSQLFILE);
 	if (!$SQL = new MySQL($db)) {           // create object
 	    die ("<span style=\"color:red;\">database connection could not be etablished!<br>"
 			."Please check main config in file '".C_PATH.MYSQLFILE."' section '[db]'</span>");

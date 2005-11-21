@@ -2,7 +2,11 @@
 /**
 * Debugger - php class to survilance a php script
 *
-* @version 0.3.0
+* @version 0.3.1
+* cahnges ro 0.3.1
+*   # if enter_method gets a method name, this name is used (instead of auto-
+*     ;)
+* detected)
 * changes to 0.3.0
 *   + auto-determine caller function via debug_trace
 * changes to 0.2.5 
@@ -359,10 +363,13 @@ class Debug
 	 * @param $method	method-name
 	 * @return
 	 **/
-	function enter_method($method="empty")
+	function enter_method($method="")
 	{
-		$debug	=	debug_backtrace();
-		$method	=	$debug[1]['function'];
+		// caller method detection
+		if ($method==NULL or $method=="empty" or $method=="") {
+			$debug	=	debug_backtrace();
+			$method	=	$debug[1]['function'];
+		}
 		if (array_key_exists("class", $debug[1])) {
 			$class	=	$debug[1]['class'] . ":";
 		} else {$class  =	"";} 
