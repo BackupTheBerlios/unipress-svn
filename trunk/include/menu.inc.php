@@ -3,9 +3,7 @@ $menu	=	parse_ini_file(C_PATH.'menu.ini',1);
 
 // detect menupoint
 // first GET value
-#$actual	=	array_pop(array_reverse(array_flip($_REQUEST)));
 $actual  =	init("menu","pg","");
-echo $pmenu;
 if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; else $menu	=	&$menu['main'];
 
 
@@ -21,12 +19,12 @@ while (list($key, $val) = each($menu)) {
     $menu_links.= " <a href='?menu=$key' accesskey='$i'>$val</a><br />";
 }
 // posts
-
 while (list($key, $val) = each($_REQUEST)) {
     $o.= "<br>$key := $val";
 }
 $o="";
 
+// menu
 $DBG->watch_var("Request", $_REQUEST);
 $DBG->watch_var("Files", $_FILES);
 switch ($actual) {

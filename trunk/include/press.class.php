@@ -25,7 +25,13 @@ class press {
 	/**
 	 * @access private
 	 */
-	var $prefix = "test_"; // dbase table prefix
+	var $prefix = ""; // dbase table prefix
+
+	/**
+	 * @access private
+	 */	
+	var $sites = "sites"; // dbase table, sites
+	
 	/**
 	 * @access private
 	 * 

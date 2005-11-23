@@ -1,4 +1,4 @@
-let <?php
+<?php
 require_once "press.class.php";
 
 class press_sites

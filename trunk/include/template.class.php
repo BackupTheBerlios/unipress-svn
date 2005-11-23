@@ -158,7 +158,7 @@ class template {
 		$body = "<body onload=\"startup();\"><div id=\"container\">" .
 		"<div id=\"tipcontainer\">" .
 		"<div id=\"navilayer\">" .
-		"<span id=\"menu\">Menü</span><br />" .
+		"<span id=\"menu\">Men&uuml;</span><br />" .
 		$this->menu .
 		"</div>" .
 		$this->help .
@@ -192,7 +192,7 @@ class template {
 				$this->special_form="onChange=\"document.myform.hiddenexample.value=0\"";
 			break;
 			case 'fehler':
-				$r = "<td colspan=\"3\" align=\"center\" class=\"error\">Ich konnte notwendige Daten für dieses Formular nicht laden. <br />Lösung: ".$this->block."</td>";
+				$r = "<td colspan=\"3\" align=\"center\" class=\"error\">Ich konnte notwendige Daten fï¿½r dieses Formular nicht laden. <br />Lï¿½sung: ".$this->block."</td>";
 			break;	
 		}
     	return "<tr>" . $r . "</tr>";	
@@ -250,7 +250,10 @@ class template {
 			case 'source_select':
 				$list 	= 	$field['values'];
 				$pre	=	array($prefill);
-				if (!is_array($list) || count ($list)<1) {$r="Es existieren keine Quellen. Bitte legen Sie eine an.";} 
+				if (!is_array($list) || count ($list)<1) {
+					$r="Es existieren keine Quellen. Bitte legen Sie eine an." .
+							"<input type=\"hidden\" name=\"source\" value=\"-1\" />";
+				} 
 				else {
 					$list	=	array_merge(array(0=>array("value"=>"-1","name"=>"Neue Quelle")),$list);
 					$r = FORM::select("source",$list,$pre,1);
@@ -259,13 +262,12 @@ class template {
 			case 'site_select':
 				$pre	=	$prefill;
 				$list 	= 	$field['values'];
-				if ($pre==0)	$pre	=	array(9999);
+				//if ($pre==0)	$pre	=	array(9999);
 				if (!is_array($list) || count ($list)<1) {
 					$r="Es existieren keine Bereiche.";
 					$this->block="<a class=\"errorlink\" href='?menu=news'>- Bereich anlegen</a><br>";
 				}
 				else {
-					$list	=	array_merge(array(0=>array("value"=>"9999","name"=>"Bitte wählen Sie mindestens einen Zielbereich")),$list);
 					$r = FORM::select("sites[]",$list,$pre,4);
 				}
 			break;

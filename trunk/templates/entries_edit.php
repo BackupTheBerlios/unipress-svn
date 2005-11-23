@@ -11,7 +11,9 @@ $PS			= new press_sites( $SQL );
 
 
 // error initializer
-$formerror = array("bereichsname"=>"", "kuerzel"=>"");
+$formerror = array(	"bereichsname"=>"", 
+					"kuerzel"=>""
+					);
 
 // was form  send?
 $send	=	init("send");
@@ -70,13 +72,13 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 							$formerror[$name], 
 							$preset[$name]
 						);
-// stichwörter
+// stichwï¿½rter
 $name = "keywords";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"<u>S</u>tichwörter", 
+											"label"=>"<u>S</u>tichw&ouml;rter", 
 											"key"=>"s", 
 											"type"=>"text",
-											"help"=>"Bitte geben Sie Stichwörter an, die den Inhalt des Artikels gut beschreiben und trennen Sie die mit Komma oder Leerzeichen.\nz. Bsp.: Mensa, Suppentopf, Auszeichnung"
+											"help"=>"Bitte geben Sie Stichw&ouml;rter an, die den Inhalt des Artikels gut beschreiben und trennen Sie die mit Komma oder Leerzeichen.\nz. Bsp.: Mensa, Suppentopf, Auszeichnung"
 											),
 							$formerror[$name], 
 							$preset[$name]
@@ -87,7 +89,7 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											"label"=>"<u>L</u>ink (ohne http://)*", 
 											"key"=>"l", 
 											"type"=>"text",
-											"help"=>"Bitte geben Sie, falls vorhanden, einen Link zu weiterführenden Informationen an.\nz. Bsp.: www.rostocker-mensa.de (ohne http://)"
+											"help"=>"Bitte geben Sie, falls vorhanden, einen Link zu weiterf&uuml;hrenden Informationen an.\nz. Bsp.: www.rostocker-mensa.de (ohne http://)"
 											),
 							$formerror[$name], 
 							$preset[$name]
@@ -95,10 +97,10 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 // Datei
 $name = "pressfile";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"<u>D</u>atei auswählen", 
+											"label"=>"<u>D</u>atei ausw&auml;hlen", 
 											"key"=>"d", 
 											"type"=>"file",
-											"help"=>"Bitte laden Sie den Artikel hoch. Mögliche Formate sind jpg, png, gif, pdf und jpeg",
+											"help"=>"Bitte laden Sie den Artikel hoch. M&ouml;gliche Formate sind jpg, png, gif, pdf und jpeg",
 											) ,
 							$formerror[$name], 
 							$preset[$name]
@@ -106,11 +108,11 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 // Source Select
 $name = "source";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"<u>Q</u>uelle auswählen", 
+											"label"=>"<u>Q</u>uelle ausw&auml;hlen", 
 											"key"=>"q", 
 											"type"=>"source_select",
 											"values"=>$PE->get_source_list(),
-											"help"=>"Bitte wählen Sie eine Quelle aus der Liste aus, oder geben Sie eine neue an.",
+											"help"=>"Bitte w&auml;hlen Sie eine Quelle aus der Liste aus, oder geben Sie eine neue an.",
 											) ,
 							$formerror[$name], 
 							$preset[$name]
@@ -121,7 +123,7 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											"label"=>"<u>N</u>eue Quelle*", 
 											"key"=>"n", 
 											"type"=>"text",
-											"help"=>"Bitte geben Sie den Namen der Quelle an, die Sie neu anlegen möchten.\nFalls die Quelle schon existiert, wird sie nicht neu angelegt."
+											"help"=>"Bitte geben Sie den Namen der Quelle an, die Sie neu anlegen m&ouml;chten.\nFalls die Quelle schon existiert, wird sie nicht neu angelegt."
 											),
 							$formerror[$name], 
 							$preset[$name]
@@ -132,7 +134,7 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											"label"=>"<u>E</u>rscheinungstag", 
 											"key"=>"e", 
 											"type"=>"date",
-											"help"=>"Wann wurde der Artikel veröffentlicht. Geben Sie das Datum in der Form Tag.Monat.Jahr an.\nz. Bsp.: 5.3.05 oder 16.02."
+											"help"=>"Wann wurde der Artikel ver&ouml;ffentlicht. Geben Sie das Datum in der Form Tag.Monat.Jahr an.\nz. Bsp.: 5.3.05 oder 16.02."
 											),
 							$formerror[$name], 
 							$preset[$name]
@@ -140,11 +142,11 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 // Site Select
 $name = "sites[]";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
-											"label"=>"<u>Z</u>ielbereiche auswählen", 
+											"label"=>"<u>Z</u>ielbereiche ausw&auml;hlen", 
 											"key"=>"q", 
 											"type"=>"site_select",
 											"values"=>$PS->get_all(),
-											"help"=>"Wählen Sie die Bereiche aus, auf denen später der Artikel erscheinen soll.\nEine Mehrfachauswahl mit mit gedrückter STRG-Taste möglich",
+											"help"=>"W&auml;hlen Sie die Bereiche aus, auf denen sp&auml;ter der Artikel erscheinen soll.\nEine Mehrfachauswahl mit mit gedr&uuml;ckter STRG-Taste m&ouml;glich",
 											) ,
 							$formerror[$name], 
 							$preset[$name]

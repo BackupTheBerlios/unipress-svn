@@ -41,18 +41,7 @@ class press_entry
 		$this->error_cmsg=$e[$nr]." ".$text;
 		return false;
 	}
-	
-	/* contructor 
-	function press_entry(& $mysql_object) {
-		if (get_class($mysql_object) != "mysql" && get_class($mysql_object) != "MySQL") {
-			$this->error(1, get_class($mysql_object));
-		}
-		if (str_replace(".", "", $mysql_object->VERSION) < 331) {
-			$this->error(2);
-		}
-		$this->conn = $mysql_object;
-	}
-	*/
+
 	/* public */
 	// add and check date (day/month day.month. d.m.y dd.mm.yy dd.mm.yyyy mm.dd.yy / and -instead of .)
 	function set_date($d) {
@@ -62,7 +51,7 @@ class press_entry
 		
 		$d = trim($d);
 		if (strlen($d)<3) {
-			return $this->error(11, "Datum ($d) ung¸ltig da zu kurz.");	
+			return $this->error(11, "Datum ($d) ung√ºltig da zu kurz.");	
 		}	
 		// make some tests
 		if (!ereg("\.",$d)) $dateform = "other"; // sonst: german
@@ -75,7 +64,7 @@ class press_entry
 		$c = count($d);
 		
 		if ($c<2 || $c>3) {
-			return $this->error(11, "Datum ($buffer) ung¸ltig da zuwenige/zuviele Trennzeichen ($c).");
+			return $this->error(11, "Datum ($buffer) ung√ºltig da zuwenige/zuviele Trennzeichen ($c).");
 		}
 
 		switch ($dateform) {
@@ -141,7 +130,7 @@ class press_entry
 	
 	// add source id
 	function set_source($s) {
-		$this->source = /*(int) */$s; // ¸berladen w‰r schick
+		$this->source = /*(int) */$s; // ÔøΩberladen wÔøΩr schick
 	}
 
 	// TODO: FileCheck?
@@ -214,7 +203,7 @@ class press_entry
 			return $this->error(10, "Erscheinungsdatum");
 		}
 		if (!is_array($this->sites)) {
-			return $this->error(10, "Seiten auf denen Verˆffentlicht werden soll");
+			return $this->error(10, "Seiten auf denen VerÔøΩffentlicht werden soll");
 		}
 		if (!is_array($this->keywords)) {
 			return $this->error(10, "Keywords, Schluesselbegriffe");

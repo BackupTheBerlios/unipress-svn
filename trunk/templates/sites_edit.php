@@ -42,7 +42,7 @@ if ($id==0) {
 			$status = "Bereich '".$preset['name']."' erfolgreich angelegt.";
 			// in dieser maske bleiben?
 			if ($Ranew=="nein") {
-				$T->add_refresh(3,"?menu=sites");
+				$T->add_refresh(0,"?menu=sites");
 				$id = $new_id;	
 			} else {
 				$id = "";
@@ -61,7 +61,7 @@ if ($id==0) {
 		} else {
 			$status = "&Auml;nderung erfolgreich.";
 			//$preset	= $PSITE->get_info( $id );
-			$T->add_refresh(3,"?menu=sites");
+			$T->add_refresh(0,"?menu=sites");
 		}
 	}
 	 // preset
@@ -73,7 +73,7 @@ if ($id==0) {
 
 
 // fill template head
-$T->add_title("Bereich ".$preset['name']." �ndern");
+$T->add_title("Bereich ".$preset['name']." ändern");
 $T->add_js("js/site_check.js");
 $T->add_js("js/site_examples.js");
 $T->add_css("css/nentry.css");
