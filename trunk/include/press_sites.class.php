@@ -22,18 +22,6 @@ class press_sites
 		$this->DBG->leave_method();
 		die ($e[$nr]." ".$text);
 	}
-/*
- // use press contructor
-	function press_sites(&$mysql_object) {
-		if (get_class($mysql_object)!="mysql" && get_class($mysql_object)!="MySQL"){
-			$this->error(1,get_class($mysql_object));
-		}
-		if (str_replace(".","",$mysql_object->VERSION)<331) {
-			$this->error(2);
-		}
-		$this->conn = $mysql_object;
-	}
-*/
 
 	// if id is additionally given, kuerzel have to exist with another id
 	function kuerzel_exists($kuerzel, $id=0) {
@@ -42,7 +30,7 @@ class press_sites
 		$id_w ="";
 		if ($id!="") { $id_w= " AND id!=".$id; } 
 		
-		$sql = "SELECT kuerzel FROM ".$this->prefix."press_sites WHERE kuerzel='".$kuerzel."' ".$id_w;
+		$sql = "SELECT kuerzel FROM ".$this->prefix.$this->sites." WHERE kuerzel='".$kuerzel."' ".$id_w;
 		if(is_object($this->DBG))$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
 		if(is_object($this->DBG))$this->DBG->watch_var("ret", $ret);
@@ -79,7 +67,7 @@ class press_sites
 			return false;
 		}
 		
-		$sql = "INSERT INTO ".$this->prefix."press_sites ( id, name, kuerzel, head, foot ) " .
+		$sql = "INSERT INTO ".$this->prefix."sites ( id, name, kuerzel, head, foot ) " .
 				"VALUES ('', '".$name."', '".$kuerzel."', '".clean_in($head)."', '".clean_in($foot)."')";
 		//echo $sql;
 		$ret = $this->conn->insert( $sql );
@@ -110,7 +98,7 @@ class press_sites
 		}
 
 		// update
-		$sql = "UPDATE ".$this->prefix."press_sites SET name='$name', kuerzel='$kuerzel'" .
+		$sql = "UPDATE ".$this->prefix.$this->sites." SET name='$name', kuerzel='$kuerzel'" .
 				", head='".clean_in($head)."', foot='".clean_in($foot)."'" .
 				" WHERE id=$id";
 		if(is_object($this->DBG))$this->DBG->sql($sql);
@@ -128,7 +116,7 @@ class press_sites
 		}
 */
 		//check id_exists
-		$sql = "SELECT name FROM ".$this->prefix."press_sites WHERE id=$id";
+		$sql = "SELECT name FROM ".$this->prefix.$this->sites." WHERE id=$id";
 		$ret = $this->conn->select( $sql );
 		if (!is_array($ret)) {
 			$this->error_msg="ID existiert nicht";
@@ -146,7 +134,7 @@ class press_sites
 		}
 */
 		//check id_exists
-		$sql = "SELECT kuerzel FROM ".$this->prefix."press_sites WHERE id=$id";
+		$sql = "SELECT kuerzel FROM ".$this->prefix.$this->sites." WHERE id=$id";
 		$ret = $this->conn->select( $sql );
 		if (!is_array($ret)) {
 			$this->error_msg="ID existiert nicht";
@@ -169,7 +157,7 @@ class press_sites
 			error(0);
 		}
 		$this->conn->set_select_type(MYSQL_ASSOC);
-		$sql = "SELECT id, name, kuerzel FROM ".$this->prefix."press_sites ORDER BY name ASC";
+		$sql = "SELECT id, name, kuerzel FROM ".$this->prefix.$this->sites." ORDER BY name ASC";
 		$ret = $this->conn->select( $sql );
 
 		return $ret;
@@ -193,7 +181,7 @@ class press_sites
 	
 	function get_all() {
 		$this->conn->set_select_type(MYSQL_BOTH);
-		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
+		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix.$this->sites." ORDER BY name ASC";
 		$ret = $this->conn->select( $sql );
 		return $ret;
 	}
