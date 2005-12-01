@@ -1,5 +1,6 @@
 <?php
-require_once("mysql.class.php");
+// $Id$
+require_once("cbmysql.class.php");
 
 class User extends MySQL {
 	/**

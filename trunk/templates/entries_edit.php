@@ -1,4 +1,5 @@
 <?php
+// $Id$
 require_once(I_PATH . "template.class.php");
 require_once(I_PATH . "press_entry.class.php");
 require_once(I_PATH . "press_sites.class.php");
@@ -18,38 +19,6 @@ $formerror = array(	"bereichsname"=>"",
 // was form  send?
 $send	=	init("send");
  
-if ($send==1) {
-	/*
-	 {VAR} Request = {ARRAY} 
-    {
-        "title" {STRING} => "My Title" {STRING}
-        "keywords" {STRING} => "Rostock, Hans, Fritz" {STRING}
-        "link" {STRING} => "" {STRING}
-        "source" {STRING} => "-1" {STRING}
-        "newsource" {STRING} => "Neue Quelleanangabe" {STRING}
-        "sites" {STRING} => {ARRAY} 
-        {
-            0 => "9999" {STRING}
-        }
-        "menu" {STRING} => "nentry" {STRING}
-        "hiddenexample" {STRING} => "0" {STRING}
-        "send" {STRING} => "1" {STRING}
-    }
-{VAR} Files = {ARRAY} 
-    {
-        "pressfile" {STRING} => {ARRAY} 
-        {
-            "name" {STRING} => "050731.jpg" {STRING}
-            "type" {STRING} => "image/jpeg" {STRING}
-            "tmp_name" {STRING} => "/tmp/phpAviAr5" {STRING}
-            "error" {STRING} => 0
-            "size" {STRING} => 75907
-        }
-    }
-	 */	
-}
-
-
 // fill template head
 $T->add_title("Presseintrag erstellen");
 $T->add_css("css/nentry.css");
@@ -164,6 +133,7 @@ $T->add_menu($menu_links);
 $T->add_content($html['content']);
 $T->add_js("js/entry_examples.js");
 $T->add_js("js/entry_check.js");
-$T->show();
+
+if ($send==1) $T->check_form(); else $T->show();
 
 ?>

@@ -1,5 +1,7 @@
 <?php
 /**
+* From toolbox: cbdebug.class.php 19 2005-12-01 15:58:32Z tuergeist
+* 
 * Debugger - php class to survilance a php script
 *
 * @version 0.3.1

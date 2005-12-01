@@ -7,6 +7,8 @@
  * 
  * @version 0.2.0 (09'2004, 11'2004, 06'2005)
  * @copyright 2004 Christoph Becker <cbecker@nachtwach.de>
+ * 
+ * $Id$
  **/
  
 // already defined?

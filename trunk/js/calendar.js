@@ -1,6 +1,4 @@
 // $Id$
-// $LastChangedDate$ $LastChangedBy$ 
-// $LastChangedRevision$
 // Title: Tigra Calendar
 // URL: http://www.softcomplex.com/products/tigra_calendar/
 // Version: 3.2 (European date format)

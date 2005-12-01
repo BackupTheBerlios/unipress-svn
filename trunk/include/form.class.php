@@ -1,16 +1,29 @@
 <?php
-/*
- * changes
- *  * 2005-09-06 cb, 
- * 		+ select hat neue option, 'onfocus'
- * 		 
- *
- */
-// CD: 2002-10-17 readonly bei text hinzugef�gt
-//                Sprungmen� bei select hinzugef�gt
-// CD: 2002-09-11 select() angepa�t: Abfrage, ob vorausgew�hlt werden soll korrigiert
+/* $Id$
+ * 
+*/
 class FORM
 {
+	/**
+	 * names the file-upload-field
+	 */
+	var $filefield = "";
+	 
+	/**
+	 * upload dir
+	 */
+	var $uploaddir = "uploaded/";
+	
+	/**
+	 * sets a new upload dir
+	 */
+	function set_uploaddir($newdir)
+	{
+		// is uploadfile_dir writable?
+		if (!is_writable($newdir)) die( "ERROR:uploaddir '$newdir' is not writable");
+		$this->uploaddir = $newdir;
+	}
+	
 	// Funktionen der Klasse FORM:
 	// - text($name,$value,$size,$maxlength,$readonly)				=> generiert ein Eingabefeld Typ Text
 	// - textarea($name,$value,$cols,$rows)							=> generiert ein Eingabefeld Typ Textarea
@@ -150,8 +163,66 @@ class FORM
 	function file($name,$class="",$size=5,$maxlength=8000)
 	{
 		$class!="" ? $class=" class=\"".$class."\"" : $class="";
+		$this->filefield = $name;
 		return "<input type=\"file\" name=\"".$name."\" size=".$size." maxlength=".$maxlength."".$class." />";
 	}//# file()
+	
+	
+	// for use in static AND non-static way
+	function upload_file($fieldname="", $dest_dir="", $allowed_types=array())
+	{
+		$formfieldname = empty($fieldname) ? $this->filefield : $fieldname;
+		$upload_path   = empty($dest_dir)  ? $this->uploaddir : $dest_dir;
+		
+		if (empty($allowed_types)){
+			$allowed_types = array("image/jpeg", "image/png", "images/gif", "application/pdf");
+		}
+			
+	
+		$f		= init($formfieldname,"f");
+		// now you have tmp_name, name, size, type and error as array keys
+		//print_r($f);
+		
+		// new name (uniqueness added)
+		 // split extension from file.
+		$fn = &$f['name'];
+		$dot_index = strrpos($fn, ".");
+		$name = substr($fn, 0, $dot_index);
+		$exte = substr($fn, $dot_index); 
+		
+		$f['name'] = uniqid($name . "_").$exte; 
+		
+		$error = "";
+		// errors
+		if($f['error']!=0) {
+			$lang = "de";
+			$error_msg = array("en"=>array(	UPLOAD_ERR_INI_SIZE=>"File size exceeds supported upload_max_filesize by php.ini.",
+											UPLOAD_ERR_FORM_SIZE=>"File size exceeds forms MAX_FILE_SIZE.",
+											UPLOAD_ERR_PARTIAL=>"File upload was not completed.",
+											UPLOAD_ERR_NO_FILE=>"No file uploaded."
+										),
+							   "de"=>array(	UPLOAD_ERR_INI_SIZE=>"Die Dateigröße überschreitet die upload_max_filesize in der php.ini.",
+											UPLOAD_ERR_FORM_SIZE=>"Die Dateigröße überschreitet die MAX_FILE_SIZE die im Formular angegeben ist.",
+											UPLOAD_ERR_PARTIAL=>"Die Datei konnte nicht vollständig hochgeladen werden.",
+											UPLOAD_ERR_NO_FILE=>"Keine Datei hochgeladen."
+										)		
+							);
+			if (!array_key_exists($lang, $error_msg)) $lang="en";
+			$error = $error_msg[$lang][($f['error'])];
+			return "ERROR:".$error;
+		} 
+		// size check
+		if($f['size'] == 0 || $f['size'] > (8000*1204)) return "ERROR:keep the filesize under 8MB!!";
+		
+		// type check
+		if(!in_array($f['type'], $allowed_types)) return "ERROR:Type of file is not allowed!!";
+		
+		// move
+		if (!move_uploaded_file($f['tmp_name'], $upload_path.$f['name'])) return "ERROR:unknown error during move from ".$f['tmp_name']." to ".$upload_path.$f['name'];
+	
+		// echo error or send to debugger?
+		return $f['name']; 
+	}
 	
 	// gibt ein Formularelement zur�ck in der Form
 	// <select name=name size=size><option value=ar_option[0][value]>ar_option[0][name]</option></select>

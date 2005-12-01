@@ -1,20 +1,10 @@
 <?php
 /**
- * check  a var if it's set, if not, set it to default
- *
- * 
- * @copyright 2003 Christoph Becker <cbecker@nachtwach.de>
- * changes:
- *  2005-09-08 to 1.1 cb
- * 	 + debug support if $DBG is an instance of cbDebug/Debug
- *   + "r" for _REQUEST as new default
- *   + "f" for _FILES
- **/
- 
-/**
  * init() - check a var it's set in one of the superglobalized arrays
  * 
- * @version 1.1
+ * 
+ * @copyright 2003 Christoph Becker <cbecker@nachtwach.de>
+ * original from toolbox: init.inc.php 19 2005-12-01 15:58:32Z tuergeist
  * @param string $var		name of the var
  * @param string $get_from	optional, describes the array (p=POST, g=GET, s=SESSION, c=COOKIE, e=ENV)
  * @param integer $set_to	optional, if var ist not set, set to this
@@ -29,7 +19,8 @@ function init($var, $get_from="pg", $set_to=0)
 		$ld = true; // local debug
 		$varname = $var;
 	}
-		
+	
+	$get_from = strtolower($get_from);
 	switch($get_from){
 		default:
 		case "r": 
