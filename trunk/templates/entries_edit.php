@@ -92,7 +92,8 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											"label"=>"<u>N</u>eue Quelle*", 
 											"key"=>"n", 
 											"type"=>"text",
-											"help"=>"Bitte geben Sie den Namen der Quelle an, die Sie neu anlegen m&ouml;chten.\nFalls die Quelle schon existiert, wird sie nicht neu angelegt."
+											"help"=>"Bitte geben Sie den Namen der Quelle an, die Sie neu anlegen m&ouml;chten.\nFalls die Quelle schon existiert, wird sie nicht neu angelegt.",
+											"needs_or"=>"source" // this or source field should be filled in 
 											),
 							$formerror[$name], 
 							$preset[$name]

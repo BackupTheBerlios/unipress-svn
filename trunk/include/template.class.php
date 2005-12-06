@@ -1,6 +1,21 @@
 <?php
 // $Id$
 //
+/* Idee:
+ * add_row() ...
+ *  -> was send?
+ * [no]
+ * 		[render]
+ * 		[show]
+ * [yes]
+ * 		-> was check ok?
+ * 		[no]
+ * 			[render with errors]
+ * 			[show]
+ * 		[yes]
+ * 			[deliver an array with fields and values]
+ * 
+ */
 require_once I_PATH."htmlscripts.inc.php";
 
 class template {
@@ -23,6 +38,7 @@ class template {
 	var $block = false;
 	var $special_form = "";
     var $filefield = "";
+    var $fieldlist = array();
     
 	// all public
 	function template() {
@@ -95,8 +111,20 @@ class template {
 		$this->add_hidden_field("send", "1");
 	}
 
-	function add_help($help) {
+	// private
+	function add_field($field){
+		if (isset($field['name'])) {
+			array_push($this->fieldlist, array($field['name']=>$field) );
+			return true;
+		}
+		else {
+			return false;
+		}	
+	}
+	
+	function add_help($name, $help) {
 		$this->help .= $help;
+		array_push($this->helpers, $name);
 	}
 
 	function add_menu($menu) {
@@ -196,15 +224,16 @@ class template {
 		$aImage = "images/help/attention.gif"; // att. image
 
 		$this->set_startup_focus($field['name']);
+		$this->add_field($field);
 
 		if (array_key_exists("help", $field)) {
 			$helpdiv = "<div class=\"tip\" id=\"".$tip."\">"."<span id=\"menu\">Hilfe"." zu ".strip_tags($field['label'])." </span><br />".nl2br($field['help'])."</div>";
-			$this->add_help($helpdiv); // add to local help
-			array_push($this->helpers, $field['name']);
+			$this->add_help($field['name'], $helpdiv); // add to local help
 			$helptip_focus = "onfocus=\"zeige('".$tip."');\"";
 			$helptip_mouse = "zeige('".$tip."');";
-
 		}
+
+		$error = check_field($field);
 
 		$prepare_row_start = "<tr ".$helptip_focus." onmouseover=\"".$helptip_mouse."this.style.backgroundColor='".$hoverColor."';\""."onblur=\"this.style.backgroundColor=''\""."onmouseout=\"this.style.backgroundColor=''\">"."<td>"."<label for=\"".$field['name']."\" accesskey=\"".$field['key']."\">".$field['label'].":</label>"."</td><td>"."<div class=\"attention\" id=\"".$aPrefix.$field['name']."\">"."<img src=\"".$aImage."\" height=\"10\" width=\"10\" alt=\"Fehler: ".$error."\" />"."</div>"."</td><td>";
 		$prepare_row_end = BR.HINT.$error.CSPAN."</td></tr>";
@@ -214,13 +243,12 @@ class template {
 			case 'text' :
 				$prefill = ($prefill == "") ? "" : " value=\"".$prefill."\"";
 				$r = "<input type=\"text\" size=\"40\" name=\"".$field['name']."\" ".$prefill." id=\"".$field['name']."\" ".$helptip_focus." />";
-
 				break;
+
 			case 'file' :
 				$r = "<input type=\"file\" name=\"".$field['name']."\" ".$helptip_focus." />";
-				$this->filefield = $field['name'];
-				
 				break;
+
 			case 'source_select' :
 				$list = $field['values'];
 				$pre = array ($prefill);
@@ -264,8 +292,36 @@ class template {
 		return $prepare_row_start.$r.$prepare_row_end;
 	}
 	
+	// protected
+	function check_field($name) {
+		// if not send, no check needed
+		if ($this->form_was_send!=true) return true;
+		
+		(array) $f = $this->fieldlist[$name]; // should alway be ok
+		print_r ($f);
+		// something needed?
+		if (array_key_exists("need_or", $f)) {
+				echo "<b>Needed as OR is: </b>" . $f["needed_or"];
+		}
+		
+		switch ($f['type']) {
+			
+		}
+		
+		
+	}
+	
+	
 	function check_form() {
+		echo "CHECK<pre>";
+		
+		while (list($key, $val)=each($this->fieldlist)) {
+			echo $key;
+			print_r($val);
+		}
 		$reti = FORM :: upload_file($this->fieldname, "uploaded/");
+		
+		echo "</pre>";
 		echo $reti;
 	}
 }
