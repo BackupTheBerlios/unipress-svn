@@ -106,11 +106,13 @@ function check_mysql_interface($preference="LOAD_MYSQLI"){
 		define("MYSQL_BOTH",  MYSQLI_BOTH); 
 		define("MYSQL_ASSOC", MYSQLI_ASSOC);
 		define('LOAD_MYSQLI', true);	
+		
 	} elseif($mysql) {
 		define("MYSQLI_NUM", MYSQL_NUM);
 		define("MYSQLI_BOTH",  MYSQL_BOTH); 
 		define("MYSQLI_ASSOC", MYSQL_ASSOC);
-		define('LOAD_MYSQL', true);	
+		define('LOAD_MYSQL', true);
+		
 	} else {
 		die("MySQL-Class Load Fatal Error. Unable to find mysql or mysqli Extension. Stop!");	
 	}
@@ -121,12 +123,16 @@ function clean_in($q) {
 	//return preg_replace('/([\W])/i',"\\\\\\1",$q);
 	return addslashes(trim($q));
 }
-} // check
 
 /**
  * Check PHP/MySQL Version (to use mysql_ or mysqli_)
  */
 check_mysql_interface();
+
+
+} // check
+
+
 
 /**
  * MySQL
@@ -1346,7 +1352,7 @@ int
 		// That means, theres no database, but a connection. Now you have the chance to create one
 		if ( !@mysql_select_db( $DBASE, $conn ) ) {
 			$this->CONN = $conn;
-			return $this->error( "no database!" );
+			//return $this->error( "no database!" );
 		}
 		$this->akt_DBASE = $DBASE;
 		$this->CONN = $conn;
