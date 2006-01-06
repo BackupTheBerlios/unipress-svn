@@ -8,6 +8,11 @@ class press_sites
 
 	var $min_name_len = 3; 
 	
+	var $prefix = "";
+	
+	function set_prefix($np) {
+		$this->prefix=trim($np);
+	}
 	
 	function error($nr,$text="") {
 		$this->DBG->enter_method();
@@ -25,15 +30,15 @@ class press_sites
 
 	// if id is additionally given, kuerzel have to exist with another id
 	function kuerzel_exists($kuerzel, $id=0) {
-		if(is_object($this->DBG))$this->DBG->enter_method();
+			$this->DBG->enter_method();
 		// check if kuerzel exists
 		$id_w ="";
 		if ($id!="") { $id_w= " AND id!=".$id; } 
 		
-		$sql = "SELECT kuerzel FROM ".$this->prefix.$this->sites." WHERE kuerzel='".$kuerzel."' ".$id_w;
-		if(is_object($this->DBG))$this->DBG->sql($sql);
+		$sql = "SELECT kuerzel FROM ".$this->prefix."press_sites WHERE kuerzel='".$kuerzel."' ".$id_w;
+				$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
-		if(is_object($this->DBG))$this->DBG->watch_var("ret", $ret);
+				$this->DBG->watch_var("ret", $ret);
 		
 		//echo "<br>aff_rows:".$this->conn->get_affected_rows();
 		
@@ -49,7 +54,7 @@ class press_sites
 	// FIXME: if entry exists and you try to write it twice, you would got the old id
 	// otherwise -1
 	function add($name, $kuerzel, $head, $foot) {
-		if(is_object($this->DBG)) $this->DBG->enter_method();
+		$this->DBG->enter_method();
 		
 		if ( empty( $this->conn ) ) {
 			error(0);
@@ -57,27 +62,33 @@ class press_sites
 		$name = clean_in($name);
 		if (strlen($name)<$this->min_name_len) {
 			$this->error_msg="Name zu kurz";
-			if(is_object($this->DBG))$this->DBG->leave_method($this->error_msg);
+			$this->DBG->leave_method($this->error_msg);
 			return false; // normal exit, name too short
 		}
 		// check if kuerzel exists
 		$kuerzel = clean_in($kuerzel);
 		if ($kuerzel!="" && $this->kuerzel_exists($kuerzel)==true) {
-			if(is_object($this->DBG))$this->DBG->leave_method(false);	
+			$this->error_msg="Kürzel existiert";
+			$this->DBG->leave_method($this->error_msg);
 			return false;
 		}
-		
-		$sql = "INSERT INTO ".$this->prefix."sites ( id, name, kuerzel, head, foot ) " .
+			
+		$sql = "INSERT INTO ".$this->prefix."press_sites ( id, name, kuerzel, head, foot ) " .
 				"VALUES ('', '".$name."', '".$kuerzel."', '".clean_in($head)."', '".clean_in($foot)."')";
 		//echo $sql;
+		$this->DBG->sql($sql);
 		$ret = $this->conn->insert( $sql );
 		
-		if(is_object($this->DBG))$this->DBG->leave_method($ret);
+		if ($ret == false) {
+			$this->DBG->send_message($this->conn->error());
+		}
+		
+		$this->DBG->leave_method($ret);
 		return $ret;
 	}
 
 	function edit($id, $name, $kuerzel, $head, $foot) {
-		if(is_object($this->DBG))$this->DBG->enter_method();
+		$this->DBG->enter_method();
 		if ( empty( $this->conn ) ) {
 			error(0);
 		}
@@ -91,14 +102,14 @@ class press_sites
 		$kuerzel = clean_in($kuerzel);
 		if ($this->kuerzel_exists($kuerzel, $id)==true) return false;
 		
-		if ($this->get_name($id)==false) {
+		if ($this->getty("name", $id)==false) {
 			$this->error_msg="ID existiert nicht und kann nicht ge�ndert werden.";
 			$this->DBG->leave_method($this->error_msg);
 			return false; // normal exit, name too short
 		}
 
 		// update
-		$sql = "UPDATE ".$this->prefix.$this->sites." SET name='$name', kuerzel='$kuerzel'" .
+		$sql = "UPDATE ".$this->prefix."press_sites SET name='$name', kuerzel='$kuerzel'" .
 				", head='".clean_in($head)."', foot='".clean_in($foot)."'" .
 				" WHERE id=$id";
 		if(is_object($this->DBG))$this->DBG->sql($sql);
@@ -108,62 +119,53 @@ class press_sites
 		return $ret;
 	}
 
-	function get_name($id) {
-		/*$id = (int) $id;
+	function getty($what, $id ) {
+				/*$id = (int) $id;
 		if (!is_int($id)) {
 			$this->error_msg="ID muss eine Ganzzahl (int) sein";
 			return false; // id should be an int
 		}
 */
-		//check id_exists
-		$sql = "SELECT name FROM ".$this->prefix.$this->sites." WHERE id=$id";
+		$sql = "SELECT ".$what." FROM ".$this->prefix."press_sites WHERE id=".$id;
 		$ret = $this->conn->select( $sql );
 		if (!is_array($ret)) {
 			$this->error_msg="ID existiert nicht";
 			return false; // id doesn exists
 		}
 
-		return $ret[0]['name'];
-	}
-
-	function get_kuerzel($id) {
-		/*$id = (int) $id;
-		if (!is_int($id)) {
-			$this->error_msg="ID ($id) muss eine Ganzzahl (int) sein";
-			return false; // id should be an int
-		}
-*/
-		//check id_exists
-		$sql = "SELECT kuerzel FROM ".$this->prefix.$this->sites." WHERE id=$id";
-		$ret = $this->conn->select( $sql );
-		if (!is_array($ret)) {
-			$this->error_msg="ID existiert nicht";
-			return false; // id doesn exists
-		}
-
-		return $ret[0]['kuerzel'];
+		return $ret[0][$what];
 	}
 	
+	
 	function get_info($id) {
-		$info['name']	=	$this->get_name($id);
-		$info['kuerzel']=	$this->get_kuerzel($id);
+		$this->DBG->enter_method();
+		$info['name']	=	$this->getty("name", $id);
+		$info['kuerzel']=	$this->getty("kuerzel", $id);
+		$info['head']	=	$this->getty("head", $id);
+		$info['foot']	=	$this->getty("foot", $id);
+		
 		$info['id']		=	$id;
 		if($info['name']==false) return false;
+		$this->DBG->leave_method($info);
 		return $info;
 	}
 	//ok
 	function show_all() {
+		$this->DBG->enter_method();
 		if ( empty( $this->conn ) ) {
 			error(0);
 		}
 		$this->conn->set_select_type(MYSQL_ASSOC);
-		$sql = "SELECT id, name, kuerzel FROM ".$this->prefix.$this->sites." ORDER BY name ASC";
+		$sql = "SELECT id, name, kuerzel FROM ".$this->prefix."press_sites ORDER BY name ASC";
+		$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
 
+		$this->DBG->leave_method($ret);
 		return $ret;
 	}
 	
 	function show_list($aim) {
+		$this->DBG->enter_method();
 		$aim	=	trim($aim);
 		$list 	= 	$this->show_all();
 		$optionen = "<ul>";
@@ -176,13 +178,18 @@ class press_sites
 				#."<strong>Bereich (K&uuml;rzel)</strong>"
 				.$optionen."</ul>";
 		} else $r= $optionen . "Es existiert noch kein Bereich. Legen Sie einen an." ."</ul>";
+		$this->DBG->leave_method($r);
 		return $r;
 	}
 	
 	function get_all() {
+		$this->DBG->enter_method();
 		$this->conn->set_select_type(MYSQL_BOTH);
-		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix.$this->sites." ORDER BY name ASC";
+		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
+		$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
+		
+		$this->DBG->leave_method($ret);
 		return $ret;
 	}
 	

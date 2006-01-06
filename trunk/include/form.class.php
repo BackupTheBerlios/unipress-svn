@@ -154,12 +154,12 @@ class FORM
 	}//# button_popup()
 	
 
-	// gibt ein Formularelement zur�ck in der Form
+	// gibt ein Formularelement zurueck in der Form
 	// <input type=file name=name size=size class=class>
 	// name			Name des Formularfeldes
 	// class		css-Klasse
-	// size			Gr��e
-	// maxlength	max Gr��e des dateiuploads (bei domainfactory 8 M)
+	// size			Groessee
+	// maxlength	max Groessee des dateiuploads (bei php.ini-dist 8 M)
 	function file($name,$class="",$size=5,$maxlength=8000)
 	{
 		$class!="" ? $class=" class=\"".$class."\"" : $class="";
@@ -182,10 +182,11 @@ class FORM
 		$f		= init($formfieldname,"f");
 		// now you have tmp_name, name, size, type and error as array keys
 		//print_r($f);
+		//echo "<br>FN: ".$formfieldname;
 		
 		// new name (uniqueness added)
 		 // split extension from file.
-		$fn = &$f['name'];
+		$fn = $f['name'];
 		$dot_index = strrpos($fn, ".");
 		$name = substr($fn, 0, $dot_index);
 		$exte = substr($fn, $dot_index); 
@@ -212,10 +213,10 @@ class FORM
 			return "ERROR:".$error;
 		} 
 		// size check
-		if($f['size'] == 0 || $f['size'] > (8000*1204)) return "ERROR:keep the filesize under 8MB!!";
+		if($f['size'] > (8000*1204)) return "ERROR:keep the filesize under 8MB!!";
 		
 		// type check
-		if(!in_array($f['type'], $allowed_types)) return "ERROR:Type of file is not allowed!!";
+		if(!in_array($f['type'], $allowed_types)) return "ERROR:Type of file is not allowed!! (".$f['type'].")";
 		
 		// move
 		if (!move_uploaded_file($f['tmp_name'], $upload_path.$f['name'])) return "ERROR:unknown error during move from ".$f['tmp_name']." to ".$upload_path.$f['name'];

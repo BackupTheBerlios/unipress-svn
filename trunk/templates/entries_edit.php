@@ -5,11 +5,11 @@ require_once(I_PATH . "press_entry.class.php");
 require_once(I_PATH . "press_sites.class.php");
 require_once(I_PATH . "form.class.php");
 
-$T			= new template();
-$PE			= new press_entry( $SQL );
-$PE->set_debugger( $DBG );
-$PS			= new press_sites( $SQL );
-
+$T			= new template( $DBG );
+$PE			= new press_entry( $SQL , $DBG);
+$PS			= new press_sites( $SQL , $DBG);
+$PS->set_prefix( $VAR['db']['tableprefix'] );
+$PE->set_prefix( $VAR['db']['tableprefix'] );
 
 // error initializer
 $formerror = array(	"bereichsname"=>"", 
@@ -30,6 +30,7 @@ $T->add_hidden_field("menu","nentry");
 $html['content']  = 	"<div class=\"error\">" . $formerror['main']."</div>" .
 						"<div class=\"status\">" . $status . "</div>" .
 						"<table summary=\"form table (as layout)\" width=\"100%\">\n";
+												
 // Titel
 $name = "title";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
@@ -109,6 +110,7 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 							$formerror[$name], 
 							$preset[$name]
 						);						
+					
 // Site Select
 $name = "sites[]";
 $html['content']  .=	$T->form_row( array("name"=>$name, 
@@ -120,8 +122,8 @@ $html['content']  .=	$T->form_row( array("name"=>$name,
 											) ,
 							$formerror[$name], 
 							$preset[$name]
-						);					
-						
+						);						
+
 						
 // footer with buttons	
 $html['content']  .= $T->form_button("ex__ok_reset") . "</table>";

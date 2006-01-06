@@ -36,6 +36,8 @@ CREATE TABLE `".$prefix."press_sites` (
 `id` INT( 4 ) NOT NULL AUTO_INCREMENT ,
 `name` VARCHAR( 70 ) NOT NULL ,
 `kuerzel` VARCHAR( 5 ) NOT NULL,
+`head` VARCHAR( 250 ) NOT NULL ,	
+`foot` VARCHAR( 250 ) NOT NULL ,
 PRIMARY KEY ( `id` ) ,
 UNIQUE ( `name` ) ,
 UNIQUE (`kuerzel`),

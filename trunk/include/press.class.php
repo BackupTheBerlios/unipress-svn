@@ -55,7 +55,7 @@ class press {
 	 * constructor
 	 * @access public
 	 */
-	function press(& $mysql_object) {
+	function press(& $mysql_object, & $DBG) {
 		if (get_class($mysql_object) != "mysql" && get_class($mysql_object) != "MySQL") {
 			die("Das �bergebene Object muss vom Typ MySQL sein, es ist aber vom Typ: ".get_class($mysql_object));
 		}
@@ -63,10 +63,7 @@ class press {
 			die("Die Ableitung von MySQL muss von Version 3.3.1 oder h�her sein, sie ist Version: ".$mysql_object->VERSION);
 		}
 		$this->conn = $mysql_object;
-		return true;
-	}
-	
-	function set_debugger(& $DBG) {
+
 		if (get_class($DBG) != "Debug" && get_class($DBG) != "debug") {
 			die("Das übergebene Object muss vom Typ Debug sein, es ist aber vom Typ: ".get_class($DBG));
 		}
@@ -74,7 +71,13 @@ class press {
 			die("Die Ableitung von Debug muss von Version 3.3.1 oder h�her sein, sie ist Version: ".$DBG->VERSION);
 		}
 		$this->DBG = $DBG;
-		return true;		
+
+		return true;
+	}
+	
+	function set_debugger(& $DBG) {
+		die("call press(mysql,dbg);");
+			
 	}
 	
 }	

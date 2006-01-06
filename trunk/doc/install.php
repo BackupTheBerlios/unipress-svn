@@ -3,6 +3,9 @@
  * $Id$
  *
  * UniPress  Installer
+ * - create database
+ * - create user
+ * - create tables
  */
 /* show only runtime errors*/
 error_reporting(E_ERROR | E_PARSE);
@@ -17,15 +20,21 @@ $db['dbase'] = "mysql"; // name of database I should use or create
 
 /* unipress stuff, unprivileged user */
 $db2 = $db; 				// copy
-$create		 = true;		// create this user
+$create		 = false;		// create this user
 $db2['user'] = "unipressuser";
 $db2['pass'] = "up9283";
 
 $db2['dbase'] = "unipress"; // name of database I should use or create
-$db2['create']= true; 		// create database
+$db2['create']= false; 		// create database
 
+$fullpath = "/home/cb/workspace/unipress/"; // full path to installation
 /***************************************************************************/
 /* do not modify anything below! */
+/* FileSystem */
+check_writeable($fullpath, "logs");
+check_writeable($fullpath, "uploaded");
+
+/* MYSQL */
 require_once("../include/cbmysql.class.php");
 
 // MySQL Module detector
@@ -51,7 +60,7 @@ if ($db2['create']) {
 	echo "<br>Creating Database " . $db2['dbase'];
 	$databasename =        $db2['dbase'];
 	include "create_database.php";
-	if ($SQL->error_no!=0) echo " failed!"; else echo "ok";
+	if ($SQL->error_no!=0) die(" failed!"); else echo "ok";
 }
 
 if ($create) {
@@ -60,7 +69,7 @@ if ($create) {
 	$username		=		$db2['user'];
 	$userpass		=		$db2['pass'];
 	include "create_user.php";
-	if ($SQL->error_no!=0) echo " failed!"; else echo "ok";
+	if ($SQL->error_no!=0) die(" failed!"); else echo "ok";
 }
 
 if(defined('LOAD_MYSQL') && $create) echo "If there occured an custom error without " .
@@ -69,17 +78,33 @@ if(defined('LOAD_MYSQL') && $create) echo "If there occured an custom error with
 $SQL->close();
 
 echo "<br>Connecting as User ... ";
-if (!$SQL = new MySQL($db2)) {           // create object
-	    die ("<span style=\"color:red;\">User connection to database could " .
+$SQL = new MySQL($db2);
+if ($SQL->error_no!=0) 
+    die ("<span style=\"color:red;\">User connection to database could " .
 	    		"not be etablished!<br>"
 			."Please check your config in ".__FILE__." !</span>");
-	}//	access data
-if (is_object($SQL)) echo "ok"; 
+else echo "ok";
 
 echo "<br>Creating Tables ... ";
-// string<-file (bsc.sql)
-// explode ;
-// query array
+	$prefix = "test_";
+	include "database.php";
+	while(list(,$q)=each($table)) {
+	#	echo "<br>".$q;
+		if(!$SQL->query($q)) die( "<br>Error while doing: " . $q);
+	}
+echo "ok";
+echo "<br><b>Installation done so far.</b>";
 
+/* _________________________ functions ______________________*/
+function check_writeable($path, $dir) {
+	if (!is_dir($path . $dir)) { 
+		die ($dir . " does not exists or is not " .
+			"readable in '".$path."'");
+	}
+	if (!is_writable($path . $dir)) { 
+		die ($dir . " is not writeable in " .
+			"'".$path."'<br>You should run 'chmod 777 ".$dir."'");
+	}
+}
 
 ?>

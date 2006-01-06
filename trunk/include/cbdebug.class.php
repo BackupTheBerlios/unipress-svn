@@ -381,12 +381,16 @@ class Debug
 		if(!(in_array($this->funktions[0], $this->hide_fkt)))
 		{
 			if($this->linefeed==1) $this->write("\n");
-			if(in_array($method, $this->hide_fkt))	{ $hint = "\n".str_repeat(" ", ($this->deep+1)*$this->prespace)."{Ausgabe unterdr�ckt}";}
+			if(in_array($method, $this->hide_fkt))	{ $hint = "\n".str_repeat(" ", ($this->deep+1)*$this->prespace)."{Ausgabe unterdrueckt}";}
 			$this->write("--> ".$class.$method); #.$hint // ?! keine Ahnung was das sollte! cb
 			array_unshift($this->funktions, $class.$method );	// vorne rein
 			$this->deep++;
 			// arguments
-			if ($this->show_args==true) {if (array_key_exists("args", $debug[1])) {	$this->write("{ARGUMENTS} = ".$this->RenderVar($debug[1]['args'])); }}
+			if ($this->show_args==true && array_key_exists("args", $debug[1])) {
+					if (!empty($debug[1]['args'])) {	
+						$this->write("{ARGUMENTS} = ".$this->RenderVar($debug[1]['args'])); 
+					}
+			}
 			
 		} else { $this->blind++; }
 

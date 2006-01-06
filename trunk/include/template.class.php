@@ -40,8 +40,10 @@ class template {
     var $filefield = "";
     var $fieldlist = array();
     
+    var $DBG;
+    
 	// all public
-	function template() {
+	function template(& $DBG) {
 		$static_helpfile = "help/index.html";
 		$this->add_help("<div id=\"helpicon\">"."<a href=\"".$static_helpfile."\"" .
 				" title=\"Hilfeseite in einem "."neuen Fenster &ouml;ffnen\" " .
@@ -63,6 +65,9 @@ class template {
 		$this->add_js('js/std.js'); // show/hide
 
 		$this->add_css('css/main.css'); // mainstyles
+		
+		$this->DBG = $DBG; // debugger
+		$this->DBG->send_message("template Class started");
 
 	}
 	function add_js_startup($js) {
@@ -113,8 +118,9 @@ class template {
 
 	// private
 	function add_field($field){
+		$this->DBG->send_message("Field '".$field['name']."' added.");
 		if (isset($field['name'])) {
-			array_push($this->fieldlist, array($field['name']=>$field) );
+			$this->fieldlist = array_merge($this->fieldlist,array($field['name']=> $field));
 			return true;
 		}
 		else {
@@ -122,7 +128,7 @@ class template {
 		}	
 	}
 	
-	function add_help($name, $help) {
+	function add_help($name, $help="") {
 		$this->help .= $help;
 		array_push($this->helpers, $name);
 	}
@@ -205,7 +211,7 @@ class template {
 				$this->special_form = "onChange=\"document.myform.hiddenexample.value=0\"";
 				break;
 			case 'fehler' :
-				$r = "<td colspan=\"3\" align=\"center\" class=\"error\">Ich konnte notwendige Daten f�r dieses Formular nicht laden. <br />L�sung: ".$this->block."</td>";
+				$r = "<td colspan=\"3\" align=\"center\" class=\"error\">Ich konnte notwendige Daten f&uuml;r dieses Formular nicht laden. <br />L&ouml;sung: ".$this->block."</td>";
 				break;
 		}
 		return "<tr>".$r."</tr>";
@@ -233,7 +239,7 @@ class template {
 			$helptip_mouse = "zeige('".$tip."');";
 		}
 
-		$error = check_field($field);
+		#$error = check_field($field);
 
 		$prepare_row_start = "<tr ".$helptip_focus." onmouseover=\"".$helptip_mouse."this.style.backgroundColor='".$hoverColor."';\""."onblur=\"this.style.backgroundColor=''\""."onmouseout=\"this.style.backgroundColor=''\">"."<td>"."<label for=\"".$field['name']."\" accesskey=\"".$field['key']."\">".$field['label'].":</label>"."</td><td>"."<div class=\"attention\" id=\"".$aPrefix.$field['name']."\">"."<img src=\"".$aImage."\" height=\"10\" width=\"10\" alt=\"Fehler: ".$error."\" />"."</div>"."</td><td>";
 		$prepare_row_end = BR.HINT.$error.CSPAN."</td></tr>";
@@ -296,6 +302,10 @@ class template {
 	function check_field($name) {
 		// if not send, no check needed
 		if ($this->form_was_send!=true) return true;
+
+	// 	// who calles you?
+		debug_print_backtrace2();
+		
 		
 		(array) $f = $this->fieldlist[$name]; // should alway be ok
 		print_r ($f);
@@ -310,19 +320,29 @@ class template {
 		
 		
 	}
-	
-	
+
 	function check_form() {
-		echo "CHECK<pre>";
-		
+		$this->DBG->enter_method();
 		while (list($key, $val)=each($this->fieldlist)) {
-			echo $key;
-			print_r($val);
-		}
-		$reti = FORM :: upload_file($this->fieldname, "uploaded/");
+			switch ($val['type']) {
+				case "file":	
+					$this->DBG->watch_var("a file", $val);
+					$reti = FORM :: upload_file($val['name'], "uploaded/");
+					if (substr($reti,0,5)=="ERROR") {
+						// error occured with uploaded file
+						// msg is substr($reti,6)
+						echo "<br>An error occured with uploaded file: " .substr($reti,6); 	
+					}
+					break;
+				
+				case "":
+					break;
+			} // switch
+		} // while
 		
-		echo "</pre>";
+		
 		echo $reti;
+		$this->DBG->leave_method($reti);
 	}
 }
 ?>
