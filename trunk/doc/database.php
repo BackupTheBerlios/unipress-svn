@@ -4,30 +4,22 @@ if (!isset($prefix)) {$prefix = "press_";}
 
 // tables
 $table = array();
+
 $table['user'] = "
-CREATE TABLE `".$prefix."user` (
+CREATE TABLE `".$prefix."press_user` (
 `id` INT( 5 ) NOT NULL AUTO_INCREMENT ,
 `name` VARCHAR( 12 ) NOT NULL ,
 `pass` VARCHAR( 40 ) NOT NULL ,
 `counter` INT( 2 ) NOT NULL ,
 `session` VARCHAR( 40 ) NOT NULL,
 `admin` SET( '1', '0' ) DEFAULT '0' NOT NULL,
+`ldap` SET( '1', '0' ) DEFAULT '0' NOT NULL,
 PRIMARY KEY ( `id` ) ,
 INDEX ( `pass` ) ,
 UNIQUE (
 `name`
 )
 ) TYPE = MyISAM COMMENT = 'usertable';
-";
-
-// user extenstion table
-$table['press_user'] = "
-CREATE TABLE `".$prefix."press_user` (
-`id` INT( 5 ) NOT NULL ,
-`adminlevel` INT( 2 ) NOT NULL ,
-PRIMARY KEY ( `id` ) ,
-INDEX ( `adminlevel` )
-) TYPE = MyISAM ;
 ";
 
 // sites

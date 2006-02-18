@@ -4,21 +4,21 @@
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
 				<tr><td>Hallo und willkommen zum Pressesystem.<br><br>" .
-						"Sie finden das Navigationsmenü immer oben links. " .
-						"Falls Sie keine Maus haben oder diese nicht benutzen können" .
-						"oder möchten, können Sie " .
+						"Sie finden das NavigationsmenÃ¼ immer oben links. " .
+						"Falls Sie keine Maus haben oder diese nicht benutzen kÃ¶nnen" .
+						"oder mÃ¶chten, kÃ¶nnen Sie " .
 						"dieses System mittels Accesskeys (Tasten in Kombination mit" .
 						"der ALT Taste) per Tastatur bedienen.<br>" .
-						"Drücken Sie ALT + 5 für weitere Informationen dazu." .
+						"DrÃ¼cken Sie ALT + 5 fÃ¼r weitere Informationen dazu." .
 						"<br><br>" .
-						"Viel Spaß wünscht" .
+						"Viel SpaÃŸ wÃ¼nscht" .
 						"<br> Christoph</td></tr>
             </table>";
 
 
 // Fill into Template
 require_once(I_PATH . "template.class.php");
-$T 			= new template();
+$T 			= new template( & $DBG );
 $T->add_title("Startseite Pressesystem");
 
 $T->add_css("css/nentry.css");

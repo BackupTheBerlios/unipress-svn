@@ -220,6 +220,9 @@ class template {
 	 * $name = "bereichsname"
 	 * form_row( array("name"=>$name, "label"=>"<u></u>", "key"=>"", "help"=>""),$formerror[$name], $pre[$name]);
 	 */
+	function add_form_field($field, $error = "", $prefill = ""){
+		$this->form_row($field, $error , $prefill );
+	}
 	function form_row($field, $error = "", $prefill = "") {
 		require_once "form.class.php";
 		$hoverColor = "#FFFFF0"; //TODO: should not stand here
@@ -304,7 +307,8 @@ class template {
 		if ($this->form_was_send!=true) return true;
 
 	// 	// who calles you?
-		debug_print_backtrace2();
+	echo __FILE__." in line ".__LINE__." was called by: <br>";
+	debug_print_backtrace2();
 		
 		
 		(array) $f = $this->fieldlist[$name]; // should alway be ok
@@ -331,7 +335,10 @@ class template {
 					if (substr($reti,0,5)=="ERROR") {
 						// error occured with uploaded file
 						// msg is substr($reti,6)
-						echo "<br>An error occured with uploaded file: " .substr($reti,6); 	
+						echo "<br>An error occured with uploaded file: " .substr($reti,6)
+						."<p><a href='javascript:history.back();'>zur&uuml;ck und korrigieren</a></p>"; 	
+					} else {
+						echo $reti;
 					}
 					break;
 				

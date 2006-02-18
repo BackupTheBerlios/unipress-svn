@@ -33,7 +33,7 @@ $html['content']  = "
 
 // Fill into Template
 require_once(I_PATH . "template.class.php");
-$T 			= new template();
+$T 			= new template( & $DBG );
 $T->add_title("Bereiche ändern");
 $T->add_js("js/sitelist.js");
 $T->add_css("css/nentry.css");

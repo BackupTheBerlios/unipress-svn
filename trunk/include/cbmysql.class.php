@@ -25,8 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  **/
 /*
+ 2006-02-18
+o changes to 4.0.3
+ +check_mysql_interface tries to (re)load mysql extension
+ #debug default_Class_Debug could only be set via Construktors array or
+        set_DBG - now it's also possibly to set local $DBG
+        
  2005-11-21
-o changes to 4.1.0
+o changes to 4.0.2
   +<String> clean_in(<String> $in)
    removes whitespaces at the begin and end (trim)
    adds slashes
@@ -95,6 +101,7 @@ o changes to 3.2.0
  * 
  */
 if (!function_exists("check_mysql_interface")) { // anti-redeclare
+
 function check_mysql_interface($preference="LOAD_MYSQLI"){
 	$mysqli = function_exists("mysqli_connect");
 	$mysql  = function_exists("mysql_connect");
@@ -102,19 +109,37 @@ function check_mysql_interface($preference="LOAD_MYSQLI"){
 		define($preference, true);
 	} elseif($mysqli) {
 		// define missing constants ~ transparent for the user
-		define("MYSQL_NUM", MYSQLI_NUM);
-		define("MYSQL_BOTH",  MYSQLI_BOTH); 
-		define("MYSQL_ASSOC", MYSQLI_ASSOC);
-		define('LOAD_MYSQLI', true);	
+		// this is for maximum code compatibility
+		if(!defined("MYSQL_NUM")) 
+		{
+			define("MYSQL_NUM", MYSQLI_NUM);
+			define("MYSQL_BOTH",  MYSQLI_BOTH); 
+			define("MYSQL_ASSOC", MYSQLI_ASSOC);
+		}
+		if(!defined("LOAD_MYSQLI")) define('LOAD_MYSQLI', true);	
 		
 	} elseif($mysql) {
-		define("MYSQLI_NUM", MYSQL_NUM);
-		define("MYSQLI_BOTH",  MYSQL_BOTH); 
-		define("MYSQLI_ASSOC", MYSQL_ASSOC);
-		define('LOAD_MYSQL', true);
+		if(!defined("MYSQLI_NUM")) 
+		{
+			define("MYSQLI_NUM", MYSQL_NUM);
+			define("MYSQLI_BOTH",  MYSQL_BOTH); 
+			define("MYSQLI_ASSOC", MYSQL_ASSOC);
+		}
+		if(!defined("LOAD_MYSQL")) define('LOAD_MYSQL', true);
 		
 	} else {
-		die("MySQL-Class Load Fatal Error. Unable to find mysql or mysqli Extension. Stop!");	
+		if (defined("MYSQL_SO_LOAD")) die("MySQL-Class Load Fatal Error. Unable to find mysql or mysqli Extension. Stop!");
+		// or:
+		// load mysql extension based on OS and recheck
+		if (!extension_loaded('mysql')) {
+		   if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+		       dl('php_mysql.dll');
+		   } else {
+		       dl('pmysql.so');
+		   }
+		}
+		check_mysql_interface("LOAD_MYSQL");
+		define("MYSQL_SO_LOAD", true);
 	}
 }
 
@@ -244,7 +269,7 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 		 *
 		 * @access public
 		 */
-			VAR $fatalerrors = array (1045, // Access denied for user
+			VAR $fatalerrors = array (//1045, // Access denied for user
 	);
 
 		/**
@@ -274,7 +299,7 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 		 *
 		 * @access private
 		 */
-		VAR $DBG = 1; // if you have some startup errors, it's fine to see them.
+		VAR $DBG = 0; // if you have some startup errors, it's fine to see them.
 		// 0-liefert "nur" false zur�ck; Fehlerbehandlung in der aufrufenden Funktion
 		// 1-zeigt Fehler per echo an, liefert false, l��t das Script jedoch weiterlaufen
 		// 2-"stirbt" mir Fehlermeldung ... die("Fehler)
@@ -381,7 +406,7 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 					return false;
 				}
 				if (array_key_exists("dbg", $SERVER)) {
-					$DBG = $SERVER['dbg'];
+					$this->set_DBG($SERVER['dbg']);
 				}
 
 				$USER = $SERVER['user'];
@@ -389,13 +414,9 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 				$DBASE = $SERVER['dbase'];
 				$SERVER = $SERVER['server'];
 
-				if ($DBG < 0 || $DBG > 3) {
-					$DBG = 1;
-				}
 			}
-			// set debug mode for class
-			$this->DBG = $DBG;
 
+			
 			// set mysql_fetch_array to associative arrays, look at php manual "mysql_fetch_array()"
 			$this->set_select_type(MYSQLI_BOTH);
 			// lookup for persistent connections
@@ -428,7 +449,7 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 		 * @since 2005-10-06
 		 */
 		function set_DBG($newdbg) {
-			if ($newdbg >= 0 and $newdbg <= 4) {
+			if ($newdbg >= 0 and $newdbg < 4) {
 				$this->DBG = $newdbg;
 				return true;
 			} else {
@@ -1169,7 +1190,7 @@ int
 	 *
 	 * @access public
 	 */
-	VAR $fatalerrors = array(104//5, // Access denied for user
+	VAR $fatalerrors = array(//1045, // Access denied for user
 						);
 	
 	
@@ -1201,7 +1222,7 @@ int
 	 *
 	 * @access private
 	 */
-	VAR $DBG = 1; // if you have some startup errors, it's fine to see them.
+	VAR $DBG = 0; // if you have some startup errors, it's fine to see them.
 	// 0-liefert "nur" false zur�ck; Fehlerbehandlung in der aufrufenden Funktion
 	// 1-zeigt Fehler per echo an, liefert false, l��t das Script jedoch weiterlaufen
 	// 2-"stirbt" mir Fehlermeldung ... die("Fehler)
@@ -1317,7 +1338,7 @@ int
 				return false;
 			}
 			if (array_key_exists("dbg", $SERVER)) {
-			    $DBG = $SERVER['dbg'];
+			    $this->set_DBG($SERVER['dbg']);
 			}
 			   
 			$USER = $SERVER['user'];
@@ -1326,13 +1347,8 @@ int
 			$SERVER=$SERVER['server'];
 
 			
-			if ($DBG<0 || $DBG>3) {
-			    $DBG = 1;
-			}
 		}
-		// set debug mode for class
-		$this->DBG = $DBG;
-	 
+
 		// set mysql_fetch_array to associative arrays, look at php manual "mysql_fetch_array()"
 		$this->set_select_type( MYSQL_BOTH );
 		// lookup for persistent connections

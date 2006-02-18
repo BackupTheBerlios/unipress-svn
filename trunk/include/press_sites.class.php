@@ -188,7 +188,7 @@ class press_sites
 		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
 		$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
-		
+		$this->DBG->watch_var("# values", count($ret));		
 		$this->DBG->leave_method($ret);
 		return $ret;
 	}

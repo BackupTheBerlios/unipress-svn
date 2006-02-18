@@ -3,7 +3,7 @@
 
 require_once(I_PATH . "template.class.php");
 require_once(I_PATH . "press_sites.class.php");
-$T			= new template();
+$T			= new template($DBG);
 $PSITE		= new press_sites( $SQL , $DBG);
 $PSITE->set_prefix( $VAR['db']['tableprefix'] );
 #$DBG->watch_var("Files", $_FILES);

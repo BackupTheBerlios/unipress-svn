@@ -175,7 +175,7 @@ class FORM
 		$upload_path   = empty($dest_dir)  ? $this->uploaddir : $dest_dir;
 		
 		if (empty($allowed_types)){
-			$allowed_types = array("image/jpeg", "image/png", "images/gif", "application/pdf");
+			$allowed_types = array("image/jpeg", "image/png", "images/gif", "application/pdf","application/x-pdf");
 		}
 			
 	
