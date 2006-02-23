@@ -117,7 +117,7 @@ if($db2['create_T']){
 // Create Admin User
 if($db2['create_AU']) {
 	echo "<br>Creating Admin User with (admin and adminpass) ... "; 
-	$SQL->insert("INSERT INTO `".$prefix."press_user` ( `id` , `name` , `pass` , `counter` , `session` , `admin` , `ldap` ) VALUES ('', 'admin', 'adminpass', '0', '', '1', '0');");
+	$SQL->insert("INSERT INTO `".$prefix."press_user` ( `id` , `name` , `pass` , `counter` , `session` , `auth` ) VALUES ('', 'admin', '".sha1("adminpass")."', '0', '',  '0');");
 	echo " done.";
 }
 echo "<br><b>Installation done so far.</b>";

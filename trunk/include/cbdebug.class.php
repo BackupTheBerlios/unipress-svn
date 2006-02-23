@@ -74,13 +74,13 @@ class Debug
 {
 	// public
 	/**
-	* Debug::debugger	set debugger on(1)/off(0)
+	* Debug::debugger	set debugger default on(1)/off(0)
 	*
 	* boolean
 	*
 	* @access public
 	**/
-	var $debugger		=	1;
+	var $debugger;
 
 	/**
 	* Debug::show_sqls	show sql queries in logfile (1) or not (0)
@@ -153,7 +153,7 @@ class Debug
 	*
 	* @access private
 	**/
-	var $VERSION		=	"0.3.0";
+	var $VERSION		=	"0.3.1";
 
 	/**
 	* Debug::functions	method stack
@@ -207,7 +207,7 @@ class Debug
 	*
 	* @access public
 	**/
-	var $onefile4oneip = true; // false means old style!
+	var $onefile4oneip; // false means old style!
 	
 	function init() {
 		return $this->Debug();
@@ -219,10 +219,14 @@ class Debug
 	 *
 	 * @return boolean	true
 	 **/
-	function Debug()
+	function Debug($debug=true, $one4one=false)
 	{
-		if($this->debugger==1)
+		$this->debugger = $debug;
+		$this->onefile4oneip = $one4one;
+
+		if($this->debugger==true)
 		{
+			
 			if (!file_exists($this->file_prefix)) {
 			    if (!file_exists("../".$this->file_prefix)) {
 			    	die("debug-class: logfile dir error, exists it? -> ".$this->file_prefix);
@@ -499,6 +503,25 @@ class Debug
 	}
 
 }// end
+
+class errorlog {
+	var $_filename;
+
+	function errorlog($dir="logs/",$errfile="") {
+		$this->_filename = $dir."error_".$errfile.".log";	
+	}
+	function entry($text){
+		
+		$fh = fopen($this->_filename,"a")or die("errorlog file init error. can't write to '".$this->_filename."'");
+		fwrite($fh,strftime("%H:%M:%S %d.%m.%Y")."\n");
+		fwrite($fh," caller IP: ".		$_SERVER['REMOTE_ADDR']."\n");
+		fwrite($fh," browser  : ".		$_SERVER["HTTP_USER_AGENT"]."\n");
+		@fwrite($fh," referer  : ".		$_SERVER["HTTP_REFERER"]."\n\n");
+		fwrite($fh," ".$text."\n");
+		fwrite($fh," Session data:".var_export($_SESSION,true)."\n- - - - -\n");
+		fclose($fh);	
+	}
+}
 
 if(!function_exists("debug_print_backtrace2")){
 	// PHP4 workaround... not needed 4 PHP5

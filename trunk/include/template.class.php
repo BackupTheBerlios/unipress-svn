@@ -43,7 +43,7 @@ class template {
     var $DBG;
     
 	// all public
-	function template(& $DBG) {
+	function template(&$DBG) {
 		$static_helpfile = "help/index.html";
 		$this->add_help("<div id=\"helpicon\">"."<a href=\"".$static_helpfile."\"" .
 				" title=\"Hilfeseite in einem "."neuen Fenster &ouml;ffnen\" " .
@@ -66,7 +66,7 @@ class template {
 
 		$this->add_css('css/main.css'); // mainstyles
 		
-		$this->DBG = $DBG; // debugger
+		$this->DBG = &$DBG; // debugger
 		$this->DBG->send_message("template Class started");
 
 	}
@@ -171,7 +171,10 @@ class template {
 		$head = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> 
 		   		<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">".
 				"<head><title>".$this->title."</title>".
-				"<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">".
+				"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />".
+				"<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />".
+	  			"<meta name=\"copyright\" content=\"Christoph Becker cbecker@nachtwach.de - Content by IEF\" />".
+				//" charset=UTF-8\">".
 				$this->refresh.
 				$this->get_js_startup().
 				javascripts($this->js).
@@ -180,7 +183,17 @@ class template {
 				."</head>";
 
 		// body
-		$body = "<body onload=\"startup();\"><div id=\"container\">"."<div id=\"tipcontainer\">"."<div id=\"navilayer\">"."<span id=\"menu\">Men&uuml;</span><br />".$this->menu."</div>".$this->help."</div>".$content."</div>"."</body></html>";
+		$body = "<body onload=\"startup();\"><div id=\"container\">"."<div id=\"tipcontainer\">"."<div id=\"navilayer\">"."<span id=\"menu\">Men&uuml;</span><br />".$this->menu."</div>".$this->help."</div>".$content.
+//"</div>".
+
+		// footer
+ 			"    \n<a href=\"http://validator.w3.org/check?uri=referer\"><img border='0'" . 
+            "        src=\"images/valid-xhtml.png\"" . 
+            "        alt=\"Valid XHTML 1.0 Transitional\" height=\"19\" width=\"53\" /></a>" . 
+            "  </p>\r\n" . 
+            "</div>".
+			"</body></html>";
+
 
 		if ($do_echo == true)
 			echo $head.$body;

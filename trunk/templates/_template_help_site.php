@@ -5,6 +5,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
+ die(__FILE__."was called!");
  include "_template_help.php";
  
 if ($actual=="news") {

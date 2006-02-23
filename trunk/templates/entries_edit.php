@@ -10,6 +10,9 @@ require_once(I_PATH . "form.class.php");
 $T			= new template( $DBG );
 $PE			= new press_entry( $SQL , $DBG);
 $PS			= new press_sites( $SQL , $DBG);
+
+$VAR['db']['tableprefix'] = "";
+
 $PS->set_prefix( $VAR['db']['tableprefix'] );
 $PE->set_prefix( $VAR['db']['tableprefix'] );
 
@@ -74,7 +77,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"type"=>"source_select",
 											"values"=>$PE->get_source_list(),
 											"help"=>"Bitte w&auml;hlen Sie eine Quelle aus der Liste aus, oder geben Sie eine neue an.",
-											"_or"=>"newsource"
+											//"_or"=>"newsource"// doesn't work
 											) 
 						);
 // new source
@@ -84,7 +87,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"key"=>"n", 
 											"type"=>"text",
 											"help"=>"Bitte geben Sie den Namen der Quelle an, die Sie neu anlegen m&ouml;chten.\nFalls die Quelle schon existiert, wird sie nicht neu angelegt.",
-											"_or"=>"source" // this or source field should be filled in 
+											"_or"=>"source", // this or source field should be filled in 
 											)
 						);
 // date, calendar	
@@ -122,6 +125,14 @@ $T->add_content($html['content']);
 $T->add_js("js/entry_examples.js");
 $T->add_js("js/entry_check.js");
 
-if ($send==1) $T->check_form(); else $T->show();
+if ($send==1) {
+	$r = $T->check_form(); 
+	if ($r) {
+		$PE->import($r) && $PE->write();
+		echo $PE->error_cmsg;
+	}
+} else {
+	$T->show();
+}
 
 ?>

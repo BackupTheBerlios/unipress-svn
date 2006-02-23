@@ -76,7 +76,7 @@ if ($id==0) {
 
 
 // fill template head
-$T->add_title("Bereich ".$preset['name']." ändern");
+$T->add_title("Bereich ".$preset['name']." &Auml&ndern");
 $T->add_js("js/site_check.js");
 $T->add_js("js/site_examples.js");
 $T->add_css("css/nentry.css");

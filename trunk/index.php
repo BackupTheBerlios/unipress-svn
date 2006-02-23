@@ -1,63 +1,40 @@
 <?php
-/*
+/* $Id$
  * press system
  *
  * index.php - mainfile 
  *
  * Christoph Becker <mail@ch-becker.de>
  *
- * June-August 2005
+ * June 2005 - February 2006
  * Version 0.1.1 
- * $Id$
- */
- 
- /* changes:
  * 
- */
- 
- /* todo
- *
- * auth
- * user management
- * site management
- * source management
- * entry management
- * normal user-backend
- * frontent-templates (smarty)
  */
         
 // do main initialization (db, db-checkup, debug, smarty)
 include("init.php");
+require_once(I_PATH."auth.class.php");
+require_once(I_PATH."press_user.class.php");
+$PU	= new press_user( &$SQL , &$DBG, new auth());
 
-// testing
-// create user
-#ok $PRESS->create_user("theo","testtest");
+// Anmeldung - session
+$DBG->send_message("* * * Anmeldung * * *");
+$authenticated = $PU->auth();
 
-/* auth */
-#if( $PRESS->auth("theo","testtest") ) echo "ok"; else echo "nich ok";
-
-/*session_start();
-
-$user	=	init("user","spg");	//	extract user from session or post
-$pass	=	init("pass","p",session_id());		//	extract pass from .. or use ssion_id
-if (!$PRESS->auth($user,$pass)){	
-	die("auth first!");	
+// show login form
+if($authenticated==false)  {
+	include (T_PATH."login.php");
+	$DBG->send_message("* * * Anmeldung zurückgewiesen * * * died.");
+	// stop debugging, close mysql-connection if wanted
+	include("init.php");
+	die();
 }
-session_register("user", $user);                                  
-*/
+$DBG->send_message("* * * Anmeldung ok * * *");
+// ------------------------
+// Anmeldung - ende
 
-	/* the main thing */
-	$o	=	""; // init output buffer;
-	
-	/* menu */
-	require(I_PATH."menu.inc.php");
-			
-	/* end menu */
-	
-	/* end main */
-
-// output
-//echo XHTMLHEAD ."<pre>" .$o ."<pre>". XHTMLFOOT;
+// menu -> Hier wird entschieden, was gemacht werden soll.
+require(I_PATH."menu.inc.php");
 
 // stop debugging, close mysql-connection if wanted
 include("init.php");

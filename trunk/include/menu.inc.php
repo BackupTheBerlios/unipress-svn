@@ -1,11 +1,16 @@
 <?php
-$menu	=	parse_ini_file(C_PATH.'menu.ini',1);
+// User or Admin menu?
+$menu	=	($_SESSION['admin']==true) ? parse_ini_file(C_PATH.'menu.ini',1):parse_ini_file(C_PATH.'user_menu.ini',1) ;
 
 // detect menupoint
 // first GET value
-$actual  =	init("menu","pg","");
-if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; else $menu	=	&$menu['main'];
-
+$actual  =	init("menu","r","");
+if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; 
+else {
+	if ($actual!="") $ERRLOG->entry("Access violation. Normal user tried to access: $actual");
+	$menu	=	&$menu['main'];
+	$actual = "main";
+}
 
 // build links
 $DBG->watch_var("act. menu",$actual);	// write var to debug log
@@ -38,11 +43,15 @@ switch ($actual) {
 		//echo XHTMLHEAD . $menu_links . XHTMLFOOT;
 		include (T_PATH."main.php");
 	break;
-	/*
+	
 	case "user":
-		include (T_PATH."_template_user.php");
+	case "edituser":
+		include (T_PATH."user_overview.php");
 	break;
-	*/
+	
+
+	
+	
 	case "sites":
 		include (T_PATH."sites_overview.php");
 	break;
@@ -59,6 +68,13 @@ switch ($actual) {
 		include (T_PATH."sites_edit.php");
 	break; 
 	
+	/* ----- user ----- */
+	case "newu":
+	case "editu":
+	case "deluser":
+		// edit an old site
+		include (T_PATH."user_edit.php");
+	break;
 	
 	/* ----- nentry ----- */
 	case "nentry":

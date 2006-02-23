@@ -1,5 +1,5 @@
 <?php
-//require_once(I_PATH."form.class.php");
+// $Id$
 
 // Bereich laden
 require_once(I_PATH . "press_sites.class.php");
@@ -11,7 +11,7 @@ $sites_list = $PSITES->show_list("edits");	//get clickable list to aim-site
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
 				<tr>
-					<td  width=\"180\" class=\"heading\" colspan=\"3\">Bitte wählen Sie den Bereich, den Sie editieren wollen.</td>
+					<td  width=\"180\" class=\"heading\" colspan=\"3\">Bitte w&auml;hlen Sie den Bereich, den Sie editieren wollen.</td>
 				</tr>
 				<tr>
 					<td id=\"tc4\" width=\"20\" valign=\"top\">
@@ -34,7 +34,7 @@ $html['content']  = "
 // Fill into Template
 require_once(I_PATH . "template.class.php");
 $T 			= new template( & $DBG );
-$T->add_title("Bereiche ändern");
+$T->add_title("Bereiche &Auml;ndern");
 $T->add_js("js/sitelist.js");
 $T->add_css("css/nentry.css");
 $T->add_menu($menu_links);

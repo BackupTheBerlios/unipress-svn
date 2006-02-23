@@ -12,6 +12,7 @@ class press_entry
 	var $wlink		= NULL;
 	var $title		= NULL;
 	var $date		= NULL;
+	var $newsource	= FALSE;
 		// linked to sites
 	var $sites		= array ();
 	var $keywords	= array ();
@@ -42,9 +43,33 @@ class press_entry
 		return false;
 	}
 
+	function import($i=array()) {
+		$this->DBG->enter_method();
+		if (empty($i) || !is_array($i)) {
+			return false;
+		}
+		foreach($i as $property) {
+			list($key,$val)=each($property);
+			
+			if (is_array($val)) {
+				$handler = "add_".substr($key,0,-2);
+			} else {
+				$handler = "set_".$key;
+			}
+			$this->$handler($val);
+			$this->DBG->watch_var("Key",$key);
+			$this->DBG->watch_var("Handler",$handler);
+			$this->DBG->watch_var("Value",$val);
+		} // foreach
+		$this->DBG->leave_method();
+		return true;
+	}
+
 	/* public */
 	// add and check date (day/month day.month. d.m.y dd.mm.yy dd.mm.yyyy mm.dd.yy / and -instead of .)
 	function set_date($d) {
+	//$ret = $d;
+
 		$dateform	=	"german"; 		// what do i suppose, which form i got
 		$buffer 	=	$d;				// save for error_msg
 		$preset_year=	strftime("%Y");	// with current year
@@ -130,18 +155,22 @@ class press_entry
 	
 	// add source id
 	function set_source($s) {
-		$this->source = /*(int) */$s; // ï¿½berladen wï¿½r schick
+		$this->source = /*(int) */$s; // überladen?
 	}
 
-	// TODO: FileCheck?
-	function set_filename($f) {
+	function set_newsource($s) {
+		$this->source = $s;
+		$this->newsource=true; 
+	}
+
+	function set_pressfile($f) {
 		$this->filename = trim($f);
 	}
 
 	function set_link($l) {
-		if (!eregi("^(http|www)", $l)) {
+		/*if (!eregi("^(http|www)", $l)) {
 			return $this->error(11, "Link ($l) beginnt nicht mit www oder http [".__FUNCTION__."]");
-		}
+		}*/
 		$this->wlink = trim($l);
 		return true;
 	}
@@ -150,8 +179,14 @@ class press_entry
 		$this->title = trim($t);
 	}
 
+	function add_sites($s) {
+		foreach($s as $k) {
+			$this->_add_site($s);	
+		}	
+	}
+
 	// add site id (INT)
-	function add_site($s) {
+	function _add_site($s) {
 		// sites exists?
 		$sql = "SELECT id FROM press_sites WHERE id=".$s;
 		$id  = $this->conn->select( $sql );
@@ -159,8 +194,15 @@ class press_entry
 		else return $this->error(11, "Site ($s) existiert nicht [".__FUNCTION__."]");
 	}
 	// add keyword as string
-	function add_keyword($k) {
+	function _add_keyword($k) {
 		array_push($this->keywords, strtolower($k));
+	}
+
+	function set_keywords($k=array()){
+		$temp = explode(" ",$k);
+		foreach($temp as $k) {
+			$this->_add_keyword($k);	
+		}	
 	}
 
 	// get source list
@@ -177,6 +219,7 @@ class press_entry
 	// kategory: if there is a new..
 	function write(){
 		$prefix = $this->prefix;
+		$this->DBG->enter_method();
 		
 		// FIXME: BAD
 		$this->error_cmsg = "";
@@ -194,7 +237,8 @@ class press_entry
 			return $this->error(10, "Dateiname/Datei");
 		}
 		if ($this->wlink==NULL) {
-			return $this->error(10, "Link");
+			// optional
+			//return $this->error(10, "Link");
 		}
 		if ($this->title==NULL) {
 			return $this->error(10, "Titel");
@@ -203,25 +247,35 @@ class press_entry
 			return $this->error(10, "Erscheinungsdatum");
 		}
 		if (!is_array($this->sites)) {
-			return $this->error(10, "Seiten auf denen Verï¿½ffentlicht werden soll");
+			return $this->error(10, "Seiten auf denen Ver&ouml;ffentlicht werden soll");
 		}
 		if (!is_array($this->keywords)) {
-			return $this->error(10, "Keywords, Schluesselbegriffe");
+			return $this->error(10, "Keywords, Schl&uuml;sselbegriffe");
 		}
 		
-		// ok
-		// create new source ? -> only admin???
-		// noew everybody could create a new source
-		$sql = "SELECT id FROM ".$prefix."press_sources WHERE name='".$this->source."'";
-		$id  = $this->conn->select( $sql );
-		if (count($id)>0) {
-			$this->source = $id[0]['id'];	
+		// should a new source be created?
+		if ($this->newsource==true) {
+			// yes, but check, if already exists
+			$sql = "SELECT id FROM ".$prefix."press_sources WHERE name LIKE '".$this->source."'";
+			$id  = $this->conn->select( $sql );
 		} else {
-			// create new
+			// no, but check, if exists
+			$sql = "SELECT id FROM ".$prefix."press_sources WHERE id='".$this->source."'";
+			$id  = $this->conn->select( $sql );
+		}
+		if (count($id)>0) {
+			// it exists, use it
+			$this->source = $id[0]['id'];	
+		} elseif ($this->newsource==true) {
+			// doesn't exists, so create new
 			$sql = "INSERT INTO ".$prefix."press_sources (id, name) VALUES ('', '".$this->source."')";
 			$sid = $this->conn->insert( $sql );
-			if ($sid==false) return $this->error(4);
+			if ($sid==false) return $this->error(4); // error while insert.
 			else $this->source = $sid;	
+		} else {
+			// ex. nicht, soll nicht angelegt werden -> Fehler
+			// not existing, but i've no plan
+			return $this->error(4);
 		}
 			
 		// write main entry
@@ -271,6 +325,7 @@ class press_entry
 		
 		// ok?
 		
+		$this->DBG->leave_method($eid);
 		return $eid;
 						
 	}

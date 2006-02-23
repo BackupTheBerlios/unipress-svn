@@ -1,0 +1,18 @@
+
+PHP Konfiguration
+---
+# PHP mhash und mcrypt extension laden oder einkompilieren
+# Debian, PHP5.1:
+apt-get install php5.1-mhash php5.1-mcrypt
+
+# php.ini
+# unter extensions folgende zeilen hinzu (linux)
+extension=mhash.so
+extension=mcrypt.so
+
+
+PEAR Installation (als root)
+---
+pear install XML_Parser Net_Socket Crypt_CHAP
+pear install File_Passwd Net_POP3 DB MDB
+pear install Auth

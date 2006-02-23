@@ -45,7 +45,7 @@ define("F_PATH", 'functions/');					// functions path
 define("I_PATH", 'include/');					// include path
 define("MYSQLFILE", 'cbmysql.class.php');			// mysql.class.file
 define("DEBUGGERFILE", 'cbdebug.class.php');	// debug.class.file
-define("DEBUGGER", 1);							// logfile Debugger 1=on/0=off
+define("DEBUGGER", true);							// logfile Debugger 1=on/0=off
 define("INITFILE", 'init.inc.php');				// initializer for variables
 define("DEFFILE", 'def_html.inc.php');			// difinitions (html)
 
@@ -206,13 +206,16 @@ if (in_array("debug", $TODO)) {
 	}
 	require I_PATH.DEBUGGERFILE;
 	
-	$DBG = new Debug;				
-	$DBG->debugger			= DEBUGGER;	//	0-debugger off / 1- debugger on
-	$DBG->filelink			= 1;
-	$DBG->onefile4oneip  	= false;
-	$DBG->init();					//	debugger start
-	
+	$DBG = new Debug(DEBUGGER, false);			//	0-debugger off / 1- debugger on | 1file41ip:false
+	$DBG->filelink			= 0;		// show link to debug file in html page
+	//old: $DBG->init();					//	debugger start
+	$DBG->hide("init");				// functions not to show in the debug log
+	$DBG->hide("press_user:press_user");
+	$DBG->hide("press_user:auth");
+	$DBG->hide("template:add_form_field");
 
+	$ERRLOG = new errorlog();
+	
 }
 
 /* load variable initialization */

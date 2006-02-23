@@ -5,12 +5,12 @@ body {
 
 
 #tipcontainer {
-    width: 40em;
-    height: 8em;
+    width: 49.6em;
+    height: 7em;
     padding:0em;
 	color:black;
     background-color: #FFFFF0;
-    border: thin solid green;//#708090;
+    border: thin solid green;
 }
 
 
@@ -36,7 +36,7 @@ body {
 
 
 #tablelayer {
-    width: 510px;
+    width: 80em;
     border: thin solid #708090;
     clear: none;
 	 margin-top: 4px;
@@ -49,7 +49,7 @@ body {
 }
 
 .tablelayer {
-    width: 510px;
+    width: 49em;
     border: thin solid #708090;
     clear: none;
 	 margin-top: 4px;
@@ -62,7 +62,7 @@ body {
 
 #navilayer {
     width: 	15em;
-    height: 8em;
+    height: 7.3em;
 	padding:1em;
 	border-right: thin solid #708090;
 	float: left;
@@ -70,7 +70,7 @@ body {
 	background-color: #eeeeee;
 	font-size: 12px;
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
-	
+	overflow:hidden;
 }
 a {
 	text-decoration: none;

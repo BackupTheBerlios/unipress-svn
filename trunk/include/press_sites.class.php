@@ -1,4 +1,7 @@
 <?php
+// $Id$
+// Bereiche anlegen, editieren, Bereichsliste erhalten
+
 require_once "press.class.php";
 
 class press_sites
@@ -17,7 +20,7 @@ class press_sites
 	function error($nr,$text="") {
 		$this->DBG->enter_method();
 		$e = array(	0	=>"keine MySQL Object. Bitte erst use_connection(MySQL \$connection) verwenden!",
-					1	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1, das ï¿½bergebene Object ist nicht vom Typ MySQL.",
+					1	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1, das übergebene Object ist nicht vom Typ MySQL.",
 					2	=>"press_sites bneoetigt mindestens MySQL-Class Version 3.3.1",
 					3	=>"unbekannter fehler",
 
@@ -68,13 +71,13 @@ class press_sites
 		// check if kuerzel exists
 		$kuerzel = clean_in($kuerzel);
 		if ($kuerzel!="" && $this->kuerzel_exists($kuerzel)==true) {
-			$this->error_msg="KÃ¼rzel existiert";
+			$this->error_msg="Kürzel existiert";
 			$this->DBG->leave_method($this->error_msg);
 			return false;
 		}
 			
 		$sql = "INSERT INTO ".$this->prefix."press_sites ( id, name, kuerzel, head, foot ) " .
-				"VALUES ('', '".$name."', '".$kuerzel."', '".clean_in($head)."', '".clean_in($foot)."')";
+				"VALUES ('', '".clean_in($name)."', '".clean_in($kuerzel)."', '".clean_in($head)."', '".clean_in($foot)."')";
 		//echo $sql;
 		$this->DBG->sql($sql);
 		$ret = $this->conn->insert( $sql );
@@ -103,13 +106,14 @@ class press_sites
 		if ($this->kuerzel_exists($kuerzel, $id)==true) return false;
 		
 		if ($this->getty("name", $id)==false) {
-			$this->error_msg="ID existiert nicht und kann nicht geï¿½ndert werden.";
+			$this->error_msg="ID existiert nicht und kann nicht ge?ndert werden.";
 			$this->DBG->leave_method($this->error_msg);
 			return false; // normal exit, name too short
 		}
 
 		// update
-		$sql = "UPDATE ".$this->prefix."press_sites SET name='$name', kuerzel='$kuerzel'" .
+		$sql = "UPDATE ".$this->prefix."press_sites SET name='".clean_in($name).
+				"', kuerzel='".clean_in($kuerzel)."'" .
 				", head='".clean_in($head)."', foot='".clean_in($foot)."'" .
 				" WHERE id=$id";
 		if(is_object($this->DBG))$this->DBG->sql($sql);
@@ -188,7 +192,8 @@ class press_sites
 		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
 		$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
-		$this->DBG->watch_var("# values", count($ret));		
+		$this->DBG->watch_var("# values", count($ret));
+		
 		$this->DBG->leave_method($ret);
 		return $ret;
 	}

@@ -12,16 +12,20 @@ CREATE TABLE `".$prefix."press_user` (
 `pass` VARCHAR( 40 ) NOT NULL ,
 `counter` INT( 2 ) NOT NULL ,
 `session` VARCHAR( 40 ) NOT NULL,
-`admin` SET( '1', '0' ) DEFAULT '0' NOT NULL,
-`ldap` SET( '1', '0' ) DEFAULT '0' NOT NULL,
+`auth` INT(11) DEFAULT '0' NOT NULL,
 PRIMARY KEY ( `id` ) ,
-INDEX ( `pass` ) ,
+INDEX ( `name` ) ,
 UNIQUE (
 `name`
 )
 ) TYPE = MyISAM COMMENT = 'usertable';
 ";
-
+$table['admins'] ="
+CREATE TABLE `\".$prefix.\"press_admins` (
+`id` INT( 5 ) NOT NULL,
+PRIMARY KEY ( `id` ) 
+) TYPE = MYISAM ;
+";
 // sites
 $table['press_sites'] = "
 CREATE TABLE `".$prefix."press_sites` (
@@ -36,6 +40,13 @@ UNIQUE (`kuerzel`),
 INDEX ( `name` )
 ) TYPE = MyISAM;
 ";
+// site-user relation
+$table['su_rel'] = "CREATE TABLE `\".$prefix.\"press_us_rel` (\n" . 
+		"`uid` INT( 5 ) NOT NULL ,\n" . 
+		"`sid` INT( 4 ) NOT NULL ,\n" . 
+		"PRIMARY KEY ( `uid` , `sid` )\n" . 
+		") TYPE = MYISAM ;\n" . 
+		"";
 
 // entries
 $table['press_entries'] = "CREATE TABLE `".$prefix."press_entries` (

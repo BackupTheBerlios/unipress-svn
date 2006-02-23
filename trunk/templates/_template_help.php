@@ -5,7 +5,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
-
+die(__FILE__."was called!");
 ?>
           <div id="helpicon">
             <a href="help.html" title="Hilfeseite in einem neuen Fenster &ouml;ffnen" target="_blank"><img border="0" src="images/help/helpIcon.png" height="30" width="32" alt="hilfe" /></a>

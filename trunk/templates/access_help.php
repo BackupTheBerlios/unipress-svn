@@ -1,6 +1,6 @@
 <?php
 //require_once(I_PATH."form.class.php");
-
+die(__FILE__."was called!");
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
 				<tr><td>Bedienhilfe zum Pressesystem<br><br>" .

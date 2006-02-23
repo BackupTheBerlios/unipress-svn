@@ -100,7 +100,7 @@ class FORM
 	// checked		entspricht dem Wert, wenn beides gleich, dann wird es vorselektiert
 	function radio($name,$value,$class="",$checked="",$option="") {
 		$class		= $class!=""	? " class=\"".$class."\""					: "";
-		$checked	= $value==$checked ? " checked" 							: "";
+		$checked	= $value==$checked ? " checked=\"checked\"" 							: "";
 		$option		= $class.$checked." ".$option;
 		return "<input type=\"radio\" name=\"".$name."\" value=\"".htmlentities($value)."\"".$option." />";
 	}//# radio()
@@ -234,6 +234,7 @@ class FORM
 	//				1+n gibt eine Liste zur�ck
 	function select($name,$ar_option,$ar_selected="",$size=1,$option="",$onfocus="")
 	{
+		#echo "<pre>$name:\n";print_r($ar_selected);
 		$size = (int) $size;
 		$optionen = "";
 		if($ar_selected==true) {
@@ -244,23 +245,27 @@ class FORM
 		}
 		is_array($ar_option)==false ? $ar_option = array() : 1;
 		foreach($ar_option as $ar) {																	// alle �bergebenen Optionen durchlaufen
+			
+			$ar['value'] = (!array_key_exists("value",$ar) && (array_key_exists("id",$ar))) ? $ar['id'] :  $ar['value'];
 			if($array_selected && is_array($array_selected))											// wenn es etwas zum selektieren gibt
-			{																							// und $ar_selected ein Array ist
-				$selected = array_key_exists(@$ar["value"],$array_selected)==true ? " selected" : "";	// wenn die aktuelle Option in $ar_selected vorkommt,
+			{		
+				
+				$selected = array_key_exists(@$ar["value"],$array_selected)==true ? " selected=\"selected\"" : "";	// wenn die aktuelle Option in $ar_selected vorkommt,
 			} else {																					// dann soll diese Option vorausgew�hlt werden
 				$selected = "";
 			}
 			if(@$ar["value"]!="" || @$ar["name"]!="") {													// komplett leere Eintr�ge sollen nicht erzeugt werden
-				$optionen .= "<option value=\"".htmlentities(@$ar["value"])."\"".$selected.">"
+				$optionen .= "\n<option value=\"".htmlentities(@$ar["value"])."\"".$selected.">"
 							.htmlentities($ar["name"])
 							."&nbsp;</option>";
 			}
 		}//# foreach(ar_option)
 		$onfocus = ($onfocus=="") ? "" : " onfocus='$onfocus'";
-		$r = "<select name=\"".$name.(($size>1 && eregi("\[",$name)==false) ?  "[]" : "")
+		$r = "\n<select name=\"".$name.(($size>1 && eregi("\[",$name)==false) ?  "[]" : "")
 				."\" size=\"".$size."\" ".trim(($size>1 ? " multiple " : "").$option)."$onfocus>"
 				.$optionen
-				."</select>";
+				."\n</select>";
+		#echo "</pre>";
 		return $r;
 	}//# select()
 	/*
