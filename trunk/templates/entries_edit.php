@@ -1,6 +1,6 @@
 <?php
 // $Id$
-// Presseeintrag hinzufÃ¼gen, Formular
+// Presseeintrag hinzufügen, Formular
 //
 require_once(I_PATH . "template2.class.php");
 require_once(I_PATH . "press_entry.class.php");

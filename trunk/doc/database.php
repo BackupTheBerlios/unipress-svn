@@ -1,6 +1,8 @@
 <?php
-//define prefix!
-if (!isset($prefix)) {$prefix = "press_";}
+// $Id$
+//
+//define tableprefix if undefined!
+if (!isset($prefix)) {$prefix = "unipress_";}
 
 // tables
 $table = array();
@@ -21,7 +23,7 @@ UNIQUE (
 ) TYPE = MyISAM COMMENT = 'usertable';
 ";
 $table['admins'] ="
-CREATE TABLE `\".$prefix.\"press_admins` (
+CREATE TABLE `".$prefix."press_admins` (
 `id` INT( 5 ) NOT NULL,
 PRIMARY KEY ( `id` ) 
 ) TYPE = MYISAM ;
@@ -41,7 +43,7 @@ INDEX ( `name` )
 ) TYPE = MyISAM;
 ";
 // site-user relation
-$table['su_rel'] = "CREATE TABLE `\".$prefix.\"press_us_rel` (\n" . 
+$table['su_rel'] = "CREATE TABLE `".$prefix."press_us_rel` (\n" . 
 		"`uid` INT( 5 ) NOT NULL ,\n" . 
 		"`sid` INT( 4 ) NOT NULL ,\n" . 
 		"PRIMARY KEY ( `uid` , `sid` )\n" . 

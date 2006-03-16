@@ -5,6 +5,8 @@ $menu	=	($_SESSION['admin']==true) ? parse_ini_file(C_PATH.'menu.ini',1):parse_i
 // detect menupoint
 // first GET value
 $actual  =	init("menu","r","");
+$DBG->watch_var("menu key exists",array_key_exists($actual,$menu ));
+
 if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; 
 else {
 	if ($actual!="") $ERRLOG->entry("Access violation. Normal user tried to access: $actual");

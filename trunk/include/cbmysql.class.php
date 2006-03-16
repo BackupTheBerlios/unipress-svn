@@ -133,9 +133,9 @@ function check_mysql_interface($preference="LOAD_MYSQLI"){
 		// load mysql extension based on OS and recheck
 		if (!extension_loaded('mysql')) {
 		   if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-		       dl('php_mysql.dll');
+		       dl('php_mysql.dll') or die("cbmysql class couldn't load php_mysql.dll");
 		   } else {
-		       dl('pmysql.so');
+		       dl('mysql.so') or die("cbmysql class couldn't load mysql.so");
 		   }
 		}
 		check_mysql_interface("LOAD_MYSQL");

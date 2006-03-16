@@ -22,15 +22,16 @@ $db['dbase'] = "mysql"; // name of database I should use for testing (only read-
 
 /* USER Connection - unipress stuff, unprivileged user */
 $db2 = $db; 				// copy
-$create		 = false;		// create this user
+$override	 = true;		// try to go on, if an error occurs
+$create		 = true;		// create this user (for this db)
 $db2['user'] = "unipressuser";
 $db2['pass'] = "up9283";
 
 $db2['dbase'] = "unipress"; // name of database I should use or create
-$db2['create']= true; 		// create database
+$db2['create']= false; 		// create database
 $prefix		  = "";			// table prefix
-$db2['create_T']=true;		// create tables
-$db2['create_AU']=true;		// create Adminuser (user. admin, pass: adminpass)
+$db2['create_T']=false;		// create tables
+$db2['create_AU']=false;		// create Adminuser (user. admin, pass: adminpass)
 
 $fullpath = "/home/cb/workspace/unipress/"; // full path to installation
 /***************************************************************************/
@@ -118,9 +119,11 @@ if($db2['create_T']){
 if($db2['create_AU']) {
 	echo "<br>Creating Admin User with (admin and adminpass) ... "; 
 	$SQL->insert("INSERT INTO `".$prefix."press_user` ( `id` , `name` , `pass` , `counter` , `session` , `auth` ) VALUES ('', 'admin', '".sha1("adminpass")."', '0', '',  '0');");
+	$SQL->insert("INSERT INTO `".$prefix."press_admins` ( `id`  ) VALUES ('1');");
 	echo " done.";
 }
-echo "<br><b>Installation done so far.</b>";
+echo "<br><b>Installation done so far.</b><p>" .
+		"Go to <a href='../'>homepage</a> to start.";
 
 /* _________________________ functions ______________________*/
 function check_writeable($path, $dir) {

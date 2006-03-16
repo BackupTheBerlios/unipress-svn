@@ -12,8 +12,14 @@ class press_user {
 	var $_prefix;
 	var $_conf;
 	var $_passpol;
+	var $_namepol;
 	var $_max_false_auth;
-	// public bloc
+	// private import bloc
+	var $_pass;
+	var $_name;
+	var $_admin;
+	
+	// public methods bloc
 	
 	function press_user(&$SQL, &$DBG, &$AUTH) {
 		// TODO: class checks missing
@@ -31,6 +37,10 @@ class press_user {
 		$this->DBG->watch_var("ini-file", $this->_passpol);
 		
 		$this->set_prefix("");
+		$this->_namepol=array("min"=>4,"max"=>10);
+		$this->_pass = false;
+		$this->_name = false;
+		$this->_admin = false;
 		
 		$this->DBG->leave_method();
 	}
@@ -100,7 +110,30 @@ class press_user {
 		$this->DBG->leave_method(false);return false;
 	} // function ende
 	
-	
+	// imports a user from pre-checked form array
+	function import($i=array()) {
+		$this->DBG->enter_method();
+		if (empty($i) || !is_array($i)) {
+			return false;
+		}
+		foreach($i as $property) {
+			list($key,$val)=each($property);
+			
+			if (is_array($val)) {
+				$handler = "add_".substr($key,0,-2);
+			} else {
+				$handler = "add_".$key;
+			}
+			// error?
+			if(!$this->$handler($val)) return "Fehler bei $handler mit $val";
+			
+			$this->DBG->watch_var("Key",$key);
+			$this->DBG->watch_var("Handler",$handler);
+			$this->DBG->watch_var("Value",$val);
+		} // foreach
+		$this->DBG->leave_method();
+		return true;
+	}
 	
 	function register($id,$session) {
 		
@@ -244,27 +277,88 @@ class press_user {
 		return 	$ret;
 	}
 	
+	function edit_user($user="",$pass="",$auth=0){
+		die("function edit_user not implemented yet");		
+	}
+	
+	function add_pass($pass="") {
+		$pass = trim($pass);
+		$len  = strlen($pass);
+		$min  = $this->_passpol['min'];
+		$max  = $this->_passpol['max'];
+		
+		if ($len > $max) return $this->error("Passwort zu lang ($len statt $max Zeichen)");
+		if ($len < $min && $len>0) {
+			// zero-length is ok for me, its used for "no-change" or remote user
+			return $this->error("Passwort zu kurz ($len statt $min Zeichen)");
+		}
+		
+		$this->_pass = $pass;
+		return true;
+	}
+
+	function add_name($name="") {
+		$name = trim($name);
+		$len  = strlen($name);
+		$min  = $this->_namepol['min'];
+		$max  = $this->_namepol['max'];
+		
+		if ($len > $max) return $this->error("Name zu lang ($len statt $max Zeichen)");
+		if ($len < $min) return $this->error("Name zu kurz ($len statt $min Zeichen)");
+		
+		$this->_name = $name;
+		return true;
+	}
+	
+	function add_admin($admin="") {
+		$admin = trim($admin);
+		if($admin=="ja") {
+			$this->_admin=true;
+		} else {
+			$this->_admin=false;
+		}
+		return true;	
+	}
+	
+	function add_auth($auth=0) {
+		
+	}
+	
+	function add_sites($sites=array()) {
+		
+	}
+	
 	//? 
 	function create_user($user = "", $pass = "", $auth = 0) {
 		$Cuser = strlen($user);
 		$Cpass = strlen($pass);
-		
-		if ($Cuser < 4) {
-			return $this->error("Name zu kurz ($Cuser Zeichen)");// [".__FUNCTION__."]");
-		}
-		
-		if ($Cpass < 8) {
-			return $this->error("Passwort zu kurz ($Cpass Zeichen)");//[".__FUNCTION__."]");
-		}
-
+	
         if ($this->user_exists($user)) {
 			return $this->error("Der Benutzer existiert bereits");// [".__FUNCTION__."]");
 		}
-		
 		
 		$sql = "INSERT INTO ".$this->prefix."user (name,pass,auth) VALUES ('$user', '".sha1($pass)."', $auth)";
 		return $this->insert($sql);
 	}
 	// private block	
+	
+	function error($nr,$text="") {
+		
+		$e = array(	0	=>"unbekannter fehler",
+					1	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1, das uebergebene Object ist nicht vom Typ MySQL.",
+					2	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1",
+					3	=>"es existiert keine Verbindung zur Datenbank",
+					4	=>"kann neue Quelle nicht anlegen",
+					10	=>"Es fehlen Daten: ",
+					11	=>"ERROR; ",
+		);
+
+		if (!array_key_exists($nr,$e)) { $nr=0; }
+		
+		// error 0-9 are deadly errors
+		if ($nr<10) die ($e[$nr]." ".$text);
+		$this->error_cmsg=$e[$nr]." ".$text;
+		return false;
+	}
 }
 ?>

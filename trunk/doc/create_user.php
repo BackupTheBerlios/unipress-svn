@@ -17,3 +17,10 @@ $SQL->query($sql);
 $sql = "GRANT SELECT , INSERT , UPDATE , DELETE , CREATE , DROP , INDEX , " .
 		"ALTER , CREATE TEMPORARY TABLES ON `". $databasename ."` . * TO '". $username ."'@'localhost';";
 $SQL->query($sql);
+
+/*
+# Lösche 'tester'@'localhost' ...
+REVOKE ALL PRIVILEGES ON * . * FROM 'tester'@'localhost';
+REVOKE ALL PRIVILEGES ON `mysql` . * FROM 'tester'@'localhost';
+DROP USER 'tester'@ 'localhost';
+*/

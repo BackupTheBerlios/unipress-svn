@@ -1,14 +1,14 @@
 <?php
-//require_once(I_PATH."form.class.php");
-
+// $Id$
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
-				<tr><td>Hallo und willkommen zum Pressesystem.<br><br>" .
-						"Sie finden das Navigationsmenü immer oben links. " .
-						"<p>Hinweis: Sie werden nicht automatisch abgemeldet. Um sich abzumelden klicken " .
-				"Die bitte auf 'Abmelden' oder schließen Sie Ihren Browser.</p>" .
+				<tr><td>Hallo und Willkommen zum Pressesystem.<br><br>" .
+						"Sie finden das Navigationsmen&uuml; immer oben links. " .
+						"<p>Hinweis: Sie werden nicht automatisch abgemeldet. " .
+						"Um sich abzumelden klicken " .
+						"Sie bitte auf 'Abmelden' oder schlie&szlig;en Sie Ihren Browser.</p>" .
 						
-						"Viel Spaß!" .
+						"Viel Spa&szlig;!" .
 						"</td></tr>
             </table>";
 

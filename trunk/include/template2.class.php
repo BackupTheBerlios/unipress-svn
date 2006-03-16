@@ -437,32 +437,7 @@ class template {
 		$this->DBG->leave_method();
 		return $prepare_row_start.$r.$prepare_row_end;
 	}
-	
-	// TODO DELME 
-	// protected
-	/*
-	function check_field($name) {
-		// if not send, no check needed
-		if ($this->form_was_send!=true) return true;
 
-	// 	// who calles you?
-	echo __FILE__." in line ".__LINE__." was called by: <br>";
-	debug_print_backtrace2();
-		
-		
-		(array) $f = $this->fieldlist[$name]; // should alway be ok
-		print_r ($f);
-		// something needed?
-		if (array_key_exists("need_or", $f)) {
-				echo "<b>Needed as OR is: </b>" . $f["needed_or"];
-		}
-		
-		switch ($f['type']) {
-			
-		}
-		
-	}
-*/
 	// TODO: in einzelfunktionen auflösen!
 	function check_form() {
 		$this->DBG->enter_method();
@@ -577,7 +552,7 @@ class template {
 					// wert vorhanden, schreiben!
 					$error=false;
 					if ( $wert && $minmax) {
-						$error = _check_minmax_length($val, $formval);
+						$error = $this->_check_minmax_length($val, $formval);
 					}
 					// XOR Bedingung
 					if ( $wert and $or ) {
@@ -612,13 +587,16 @@ class template {
 			} // switch
 		} // while
 		$this->DBG->send_message("!!END Fields;");
-		$this->DBG->watch_var("!Any errors",empty($this->fielderrors));
+		$thereareerrors = !empty($this->fielderrors);
+		$this->DBG->watch_var("!Any errors",$thereareerrors);
 		
-		if (empty($this->fielderrors) || (count($this->fielderrors)==1 && $this->fielderrors['source']==FALSE) ) {
+		if (!$thereareerrors || !(count($this->fielderrors)==1 && $this->fielderrors['source']==FALSE) ) {
+			
 			$reti = $this->results;
 			$this->DBG->watch_var("!Result",$reti);
 			$this->DBG->watch_var("!Errors (should be null)",$this->fielderrors);
 		} else {
+			$this->DBG->send_message("Showing form...");
 			$this->show(); // if errors
 			$reti = false;
 		}
@@ -631,14 +609,15 @@ class template {
 	// val[minmax]=arrax("min"=> .., "max"=>..)
 	// WENN ALLES OK -> false, ansonsten fehlermeldung
 	function _check_minmax_length($val, $wert) {
-	
+		$this->DBG->enter_method();
+		$this->DBG->watch_var("minmax",$val['minmax']);
 		$min = $val['minmax']['min'];
 		$max = $val['minmax']['max'];
 		
 		$mm_error=false;
-		if ( strlen($wert)>$max)  $mm_error = "Dieses Feld darf höchstens ".$val['name']['max']." Zeichen lang sein.";		
-		if ( strlen($wert)<$min)  $mm_error = "Dieses Feld muss mindestens ".$val['name']['min']." Zeichen lang sein.";
-
+		if ( strlen($wert)>$max)  $mm_error = "Dieses Feld darf höchstens ".$max." Zeichen lang sein.";		
+		if ( strlen($wert)<$min)  $mm_error = "Dieses Feld muss mindestens ".$min." Zeichen lang sein.";
+		$this->DBG->leave_method($mm_error);
 		return $mm_error;
 	}
 
