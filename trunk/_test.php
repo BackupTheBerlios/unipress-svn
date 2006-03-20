@@ -1,4 +1,5 @@
 <?php
+die("test is out of date and should be refactored.");
 
 // load main env, inkluding instanciation of $SQL = new MySQL 
 require_once("init.php");
@@ -15,11 +16,11 @@ require_once(I_PATH . "press.class.php");
 
 // PSITES
 require_once(I_PATH . "press_sites.class.php");
-$PSITES = new press_sites( $SQL ); // $SQL has to be a valid MySQL-Object
+$PSITES = new press_sites( &$SQL, &$DBG ); // $SQL has to be a valid MySQL-Object
    
 //PENTRIES
 require_once(I_PATH . "press_entry.class.php");
-$PENTRIES = new press_entry( $SQL ); // SQL has to be an valid Object
+$PENTRIES = new press_entry( &$SQL ); // SQL has to be an valid Object
 
 // setup test-database
 $prefix="test_";          // needed for database

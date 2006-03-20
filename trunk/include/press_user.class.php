@@ -18,7 +18,9 @@ class press_user {
 	var $_pass;
 	var $_name;
 	var $_admin;
-	
+	var $_auth;
+	var $_sites;
+	var $_id;
 	// public methods bloc
 	
 	function press_user(&$SQL, &$DBG, &$AUTH) {
@@ -41,6 +43,9 @@ class press_user {
 		$this->_pass = false;
 		$this->_name = false;
 		$this->_admin = false;
+		$this->_id = false;
+		$this->_auth = 0;
+		
 		
 		$this->DBG->leave_method();
 	}
@@ -111,28 +116,118 @@ class press_user {
 	} // function ende
 	
 	// imports a user from pre-checked form array
-	function import($i=array()) {
+	function import($i=array(),$has_id=0) {
 		$this->DBG->enter_method();
 		if (empty($i) || !is_array($i)) {
 			return false;
 		}
-		foreach($i as $property) {
-			list($key,$val)=each($property);
-			
-			if (is_array($val)) {
-				$handler = "add_".substr($key,0,-2);
-			} else {
-				$handler = "add_".$key;
-			}
-			// error?
-			if(!$this->$handler($val)) return "Fehler bei $handler mit $val";
-			
-			$this->DBG->watch_var("Key",$key);
-			$this->DBG->watch_var("Handler",$handler);
-			$this->DBG->watch_var("Value",$val);
-		} // foreach
+		
+		
+		if($has_id>0) {
+			// existing user
+			// preload from db
+			$preload = $this->get_info($has_id);
+			$this->_id = $preload;
+		} /*
+			if($preload==false) return $this->error(10,"Benutzer existiert nicht.");
+			// overwrite with formdata
+			$this->add_pass($i['pass']);
+			$this->add_auth($i['auth']);
+			$this->add_sites($i['sites[]']);	
+		} else {*/
+			foreach($i as $property) {
+				list($key,$val)=each($property);
+				
+				if (is_array($val)) {
+					$handler = "add_".substr($key,0,-2);
+				} else {
+					$handler = "add_".$key;
+				}
+				// error?
+				$reti = $this->$handler($val);
+				if(!empty($val) && $has_id==0) { 
+					if(!$reti) return $this->error(10,"Fehler bei $handler mit $val");
+				}
+				$this->DBG->watch_var("Key",$key);
+				$this->DBG->watch_var("Handler",$handler);
+				$this->DBG->watch_var("Value",$val);
+			} // foreach
+		//}
+		// everything seems to be ok. write down
+		
 		$this->DBG->leave_method();
 		return true;
+	}
+
+	// writes a new entry
+	function write() {
+		$prefix = $this->_prefix;
+		$this->DBG->enter_method();
+		
+		// FIXME: BAD
+		$this->error_cmsg = "";
+
+		if($this->_id==false){		
+			if (!is_array($this->_sites)) 	{
+				$this->DBG->watch_var("Fehler: Bereiche (sites)",$this->_sites);
+				return $this->error(10, "Bereichszuordnung");
+			}
+			if (empty($this->_name)) 		return $this->error(10, "Benutzername");
+			if (empty($this->_pass) && $this->_auth==0) return $this->error(10, "Passwort für lokalen Benutzer");
+			if (empty($this->_auth))		return $this->error(10, "Authentifizierungsmechanismus");
+			if (empty($this->_admin)) 		return $this->error(10, "Administratorflag");
+		} else {
+		 	$and = "";
+		 	$set = "";
+		 	$id	=	$this->_id['main']['id'];
+			if($this->_pass!=false) { $set .=$and."pass=sha1('".$this->_pass."') ";$and=", ";}
+			if($this->_auth!=false) { $set .=$and."auth=".$this->_auth; $auth=", ";}
+		} 
+		
+		// write main entry
+		// id  	 name  	 pass  	 counter  	 session  	 auth
+		if($this->_id==0) {
+			$sql = "INSERT INTO ".$prefix."press_user (id, name, pass, auth) " .
+					"VALUES ('','".$this->_name."','".sha1($this->_pass) . 
+					"',".$this->_auth.")";
+			$eid  = $this->SQL->insert( $sql );
+		} elseif($set!="") {
+			$sql = "UPDATE ".$prefix."press_user SET ".$set
+					." WHERE id=".$id;
+			$eid	= $id;
+			$eid  = $this->SQL->update( $sql );
+		}
+		// after this point should be no errors!!!!!
+		
+		// write site_relation
+		// id, site
+		reset ($this->_sites);
+		
+		// write user-site relation
+		while (list (,$val) = each ($this->_sites)) {
+			if($eid>0){
+				$sql = "INSERT INTO ".$prefix."press_us_rel (uid, sid) VALUES (".$eid.", ".$val.")";
+				$id  = $this->SQL->insert( $sql );
+				if(!$id) $this->error(10, "User($eid)-Site($val)-Relation konnte nicht geschrieben werden.");
+			}
+		}
+		
+		// remove admin state (always)
+		$sql = "DELETE FROM ".$prefix."press_admins WHERE id=".$eid;
+		$this->SQL->delete($sql);
+		
+		// is admin?
+		if(strtolower($this->_admin)=="ja" && $eid>0) {
+			$sql = 	"INSERT INTO ".$prefix."press_admins (id) VALUES (".$eid.")";
+			if(!$this->SQL->insert( $sql )) $this->error(10, "Konnte Admin-Flag nicht setzen.");
+		}
+		
+		
+		
+		// ok?
+		$this->DBG->leave_method($eid);
+		return $eid;
+						
 	}
 	
 	function register($id,$session) {
@@ -287,10 +382,10 @@ class press_user {
 		$min  = $this->_passpol['min'];
 		$max  = $this->_passpol['max'];
 		
-		if ($len > $max) return $this->error("Passwort zu lang ($len statt $max Zeichen)");
+		if ($len > $max) return $this->error(11,"Passwort zu lang ($len statt $max Zeichen)");
 		if ($len < $min && $len>0) {
 			// zero-length is ok for me, its used for "no-change" or remote user
-			return $this->error("Passwort zu kurz ($len statt $min Zeichen)");
+			return $this->error(11,"Passwort zu kurz ($len statt $min Zeichen)");
 		}
 		
 		$this->_pass = $pass;
@@ -303,8 +398,8 @@ class press_user {
 		$min  = $this->_namepol['min'];
 		$max  = $this->_namepol['max'];
 		
-		if ($len > $max) return $this->error("Name zu lang ($len statt $max Zeichen)");
-		if ($len < $min) return $this->error("Name zu kurz ($len statt $min Zeichen)");
+		if ($len > $max) return $this->error(11,"Name zu lang ($len statt $max Zeichen)");
+		if ($len < $min) return $this->error(11,"Name zu kurz ($len statt $min Zeichen)");
 		
 		$this->_name = $name;
 		return true;
@@ -312,20 +407,28 @@ class press_user {
 	
 	function add_admin($admin="") {
 		$admin = trim($admin);
-		if($admin=="ja") {
-			$this->_admin=true;
-		} else {
-			$this->_admin=false;
-		}
+		$this->_admin=$admin;
+
 		return true;	
 	}
 	
 	function add_auth($auth=0) {
-		
+		$auth = (int) $auth;
+		if( array_key_exists($auth, $this->_conf) ) $this->_auth = $auth;
+		else return $this->error(11,"Unbekanntes Authentifizierungsverfahren angefordert!");
+		return true;
 	}
 	
 	function add_sites($sites=array()) {
-		
+		$this->DBG->enter_method();
+		if(!is_array($sites) || empty($sites)) {
+			$r = $this->error(11,"Keine Seitenzuordnung übergeben!");
+			$this->DBG->leave_method($r);
+			return $r;
+		}
+		$this->_sites = $sites;
+		$this->DBG->leave_method(true);
+		return true;
 	}
 	
 	//? 
@@ -345,8 +448,8 @@ class press_user {
 	function error($nr,$text="") {
 		
 		$e = array(	0	=>"unbekannter fehler",
-					1	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1, das uebergebene Object ist nicht vom Typ MySQL.",
-					2	=>"press_sites benoetigt mindestens MySQL-Class Version 3.3.1",
+					1	=>"press_user benoetigt mindestens MySQL-Class Version 3.3.1, das uebergebene Object ist nicht vom Typ MySQL.",
+					2	=>"press_user benoetigt mindestens MySQL-Class Version 3.3.1",
 					3	=>"es existiert keine Verbindung zur Datenbank",
 					4	=>"kann neue Quelle nicht anlegen",
 					10	=>"Es fehlen Daten: ",

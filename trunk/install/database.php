@@ -16,10 +16,7 @@ CREATE TABLE `".$prefix."press_user` (
 `session` VARCHAR( 40 ) NOT NULL,
 `auth` INT(11) DEFAULT '0' NOT NULL,
 PRIMARY KEY ( `id` ) ,
-INDEX ( `name` ) ,
-UNIQUE (
-`name`
-)
+UNIQUE ( `name` , `auth` )
 ) TYPE = MyISAM COMMENT = 'usertable';
 ";
 $table['admins'] ="

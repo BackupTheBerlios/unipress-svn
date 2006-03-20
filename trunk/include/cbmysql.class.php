@@ -1180,7 +1180,7 @@ int
 	 *
 	 * @access public
 	 */
-	VAR $error_cmsg;
+	VAR $error_cmsg="";
 
 	/**
 	 * MySQL::fatalerros - list of errornumbers, we should stop, regardless of which 
@@ -1262,8 +1262,8 @@ int
 	 */
 	function error( $text = "-" )
 	{
-		$this->error_no = mysql_errno();
-		$this->error_msg = mysql_error();
+		$this->error_no = mysql_errno() != 0 ? mysql_errno() : $this->error_no ;
+		$this->error_msg = mysql_error()!= "" ? mysql_error() : $this->error_msg ;
 		$this->error_cmsg = $text;
 		
 		$msg = "<pre style=\"color:red;background-color:white;font-size:12px;\"><b>Custom Error Message: $text ";
@@ -1955,7 +1955,7 @@ int
 		$this->time_start();
 		$sql = trim( $sql );
 		if ( $this->checkup( "", $sql ) != true ) {
-			$this->error( "Queryfehler..." );
+			return $this->error( "Queryfehler..." );
 		}
 		$data = array();
 		$count = 0;
@@ -1973,7 +1973,7 @@ int
 		$this->time_stop("query");
 
 		if($data==false) {
-			$this->error($sql);
+			return $this->error($sql);
 		}
 
 		return $data;

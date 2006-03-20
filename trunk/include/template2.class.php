@@ -590,13 +590,13 @@ class template {
 		$thereareerrors = !empty($this->fielderrors);
 		$this->DBG->watch_var("!Any errors",$thereareerrors);
 		
-		if (!$thereareerrors || !(count($this->fielderrors)==1 && $this->fielderrors['source']==FALSE) ) {
-			
+		if (!$thereareerrors) {
+			//!(count($this->fielderrors)==1 && $this->fielderrors['source']==FALSE) ) {			
 			$reti = $this->results;
 			$this->DBG->watch_var("!Result",$reti);
 			$this->DBG->watch_var("!Errors (should be null)",$this->fielderrors);
 		} else {
-			$this->DBG->send_message("Showing form...");
+			$this->DBG->send_message("Errors, showing form...");
 			$this->show(); // if errors
 			$reti = false;
 		}

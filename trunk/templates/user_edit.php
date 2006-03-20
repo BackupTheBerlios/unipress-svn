@@ -8,8 +8,8 @@ require_once(I_PATH . "template2.class.php");
 require_once(I_PATH . "press_sites.class.php");
 //$AUTH 		= new auth();
 $T			= new template(&$DBG);
-//$PU			= new press_user( &$SQL , &$DBG, new auth()); //&$AUTH);
-$PS			= new press_sites( $SQL , $DBG);
+$PU			= new press_user( &$SQL , &$DBG, new auth()); //&$AUTH);
+$PS			= new press_sites( &$SQL , &$DBG);
 #$DBG->watch_var("Files", $_FILES);
 
 
@@ -81,7 +81,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"label"=>"<u>B</u>enutzername", 
 											"key"=>"B", 
 											"type"=>"text",
-											"help"=>"",//Bitte w&auml;hlen Sie einen gut beschreibenden Namen.\nz. Bsp.: Institut f&uuml;r Sonnenforschung"
+											"help"=>"Bitte w&auml;hlen Sie einen Benutzernamen den Sie importieren oder anlegen m&ouml;chten.\nZum Beispiel: cb098",//Bitte w&auml;hlen Sie einen gut beschreibenden Namen.\nz. Bsp.: Institut f&uuml;r Sonnenforschung"
 											"prefill"=>	$preset['main'][$name]
 											)
 						);
@@ -91,7 +91,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"label"=>"<u>P</u>asswort", 
 											"key"=>"p", 
 											"type"=>"password",
-											"help"=>"Bitte wählen Sie ein Passwort mit mindestens ".$min." Zeichen. \nZum Beispiel: ".uniqid(),
+											"help"=>"Nur notwendig, wenn ein lokaler Benutzer angelegt werden soll!\nBitte wählen Sie ein Passwort mit mindestens ".$pass_policy['min']." Zeichen. \nZum Beispiel: ".uniqid(),
 											"optional"=>$optinality[$name], // optional?
 											"minmax"=>$pass_policy,
 											"prefill"=>$preset['main'][$name]
@@ -119,7 +119,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"label"=>"<u>A</u>dministrator", 
 											"key"=>"A", 
 											"type"=>"yn_radio",
-											"help"=>"",
+											"help"=>"Wählen Sie 'ja' wenn dieser Benutzer Administratorrechte erhalten soll. Im Regelfall ist nicht nicht n&ouml;tig!",
 											"prefill"=>$preset['admin']
 											) 
 						);
@@ -130,7 +130,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"label"=>"Authentifizierungs<u>v</u>erfahren", 
 											"key"=>"v", 
 											"type"=>"radio",
-											"help"=>"",
+											"help"=>"Wählen Sie, ob ein Benutzer lokal angelegt werden, oder mit Hilfe anderer Systeme authentifiziert werden soll.\nZum Beispiel: IMAP bedeutet, dass der Benutzer über einen IMAP-Server identifiziert wird.",
 											"values"=>$PU->get_auth_list(),
 											"prefill"=>$preset['main']['auth']
 											) 
@@ -156,10 +156,8 @@ if ($id==0) {
 											"key"=>"m", 
 											"type"=>"yn_radio",
 											"help"=>"Falls Sie mehrere Benutzer anlegen wollen, w&auml;hlen sie -Ja-, damit Sie nicht zur &Uuml;bersicht umgeleitet werden.",
-										
-											) ,
-							$formerror[$name], 
-							$Ranew
+											"value"=>init("anew","r","nein")
+											) 
 						);	
 
 	// foot
@@ -176,12 +174,11 @@ $T->add_menu($menu_links);
 if ($send==1) {
 	$r = $T->check_form(); 
 	if ($r) {
-		//$PE->import($r) && $PE->write();
-		echo //$PE->error_cmsg;
-		  
-		 "checked and ok (".$r.") - please implement 'make changes or add new'";
-		$T->show();
-		$DBG->watch_var("CheckForm",$r);
+		echo "checked and ok (".$r.")".
+			"<br>please implement ".$what_to_do;
+		//$DBG->watch_var("CheckForm",$r);
+		if($PU->import($r,$id) && $PU->write()) 
+			echo "<br>alles ok ($id) ".$PU->error_cmsg; else echo "<br>fehler ($id).. ".$PU->error_cmsg;		
 	}
 } else {
 	$T->show();
