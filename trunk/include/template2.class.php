@@ -563,7 +563,7 @@ class template {
 							$error = "Dieses Feld wird ignoriert werden, da bereits '".$or_field_name."' ausgef&uuml;llt ist.";
 						} else {
 							// genau richtig, fehler löschen
-							$error = _check_minmax_length($val, $formval);
+							$error = $this->_check_minmax_length($val, $formval);
 							if(!$error) $this->fielderrors[$val['_or']]= false; // fehler löschen
 						}
 					} 
@@ -590,15 +590,26 @@ class template {
 		$thereareerrors = !empty($this->fielderrors);
 		$this->DBG->watch_var("!Any errors",$thereareerrors);
 		
-		if (!$thereareerrors) {
+		$realerrors=false;
+		while(list($key,$val)=each($this->fielderrors)) {
+			if($val!=false) $realerrors==true;
+		}
+		
+		$this->DBG->watch_var("!Only real!errors",$realerrors);
+		
+		if ($thereareerrors && $realerrors) {
+			// Fehlerfall
+			$this->DBG->watch_var("!Errors (should be some)",$this->fielderrors);
+			$this->DBG->send_message("Errors, showing form...");
+			$this->show(); // if errors
+			$reti = false;
+
+		} else {
+			// kein Fehler oder kein echter
 			//!(count($this->fielderrors)==1 && $this->fielderrors['source']==FALSE) ) {			
 			$reti = $this->results;
 			$this->DBG->watch_var("!Result",$reti);
 			$this->DBG->watch_var("!Errors (should be null)",$this->fielderrors);
-		} else {
-			$this->DBG->send_message("Errors, showing form...");
-			$this->show(); // if errors
-			$reti = false;
 		}
 		$this->DBG->leave_method($reti);
 		return $reti;
@@ -611,6 +622,7 @@ class template {
 	function _check_minmax_length($val, $wert) {
 		$this->DBG->enter_method();
 		$this->DBG->watch_var("minmax",$val['minmax']);
+		if(!is_array($val['minmax'])) return false; // Kein Fehler, da keine Grenze
 		$min = $val['minmax']['min'];
 		$max = $val['minmax']['max'];
 		

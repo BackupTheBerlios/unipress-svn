@@ -53,6 +53,7 @@ class press_user {
 	function auth(){
 		$this->DBG->enter_method();
 		session_start();
+		session_set_cookie_params ( 0 ); // bis browser geschlossen wird...
 		$send   = init("send","p",false);
 		$active = init("session","s",false);
 		$logout = init("menu","r",false);
@@ -342,6 +343,8 @@ class press_user {
 			$this->DBG->watch_var("remote auth:",$ret);	
 		} else {
 			$this->DBG->send_message("NOT USING: invalid auth mechanism	");
+			$this->DBG->watch_var("auth mechanisms",$this->_conf);
+			$this->DBG->watch_var("used i should auth",$data['auth']);
 			$ret = false;
 		}
 		

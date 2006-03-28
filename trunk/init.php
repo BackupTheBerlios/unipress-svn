@@ -10,7 +10,8 @@
  * 
  * $Id$
  **/
-error_reporting(E_ERROR | E_WARNING);
+error_reporting(E_ERROR//);// 
+| E_WARNING);
  
 // already defined?
 if (isset($INITSTART)) {
@@ -31,40 +32,49 @@ $TODO = array("functions",     // set path to functions
 			"config",         // load config
 			"mysql",           // load and start mysql class
 		#	"check_tables",		// check mysql tables
+		#	"export_tables",		// export mysql table-description for later checks
 		#	"smarty",         // load an start smarty
 			"debug",			// load and start/stop debugger
 			"definitions",		// load ssome other defines (html etc)
 			);
 
-/* define localhosts IP for extra config-file*/
-define("LOCALHOSTIP","127.0.0.1");
+/* define localhosts IP for extra config-file, 
+ * extra lokale Konfuguration für die Entwicklung
+ * -> definierte IP Adresse für lok. Konf. */
+define("LOCALHOSTIP","127.0.0.1321");
 
 /* define paths */
-define("F_PATH", 'functions/');					// functions path
+define("F_PATH", 		'functions/');			// functions path
 
-define("I_PATH", 'include/');					// include path
-define("MYSQLFILE", 'cbmysql.class.php');			// mysql.class.file
-define("DEBUGGERFILE", 'cbdebug.class.php');	// debug.class.file
-define("DEBUGGER", true);							// logfile Debugger 1=on/0=off
-define("INITFILE", 'init.inc.php');				// initializer for variables
-define("DEFFILE", 'def_html.inc.php');			// difinitions (html)
+define("I_PATH", 		'include/');			// include path
+define("MYSQLFILE", 	'cbmysql.class.php');	// mysql.class.file
+define("DEBUGGERFILE", 	'cbdebug.class.php');	// debug.class.file
+define("DEBUGGER", 		true);					// logfile Debugger 1=on/0=off
+define("INITFILE", 		'init.inc.php');		// initializer for variables
+define("DEFFILE", 		'def_html.inc.php');	// difinitions (html)
 
-define("C_PATH", 'configs/');					// config path
+define("C_PATH", 		'configs/');			// config path
 
-define("TABLESFILE", 'tables.php');				// table check dump
+define("TABLESFILE", 	'tables.php');			// table check dump
 
-define("S_PATH", 'include/smarty/');			// smarty path
-define("SMARTYFILE", 'libs/Smarty.class.php');	// smarty class file
+define("S_PATH", 		'include/smarty/');		// smarty path
+define("SMARTYFILE", 	'libs/Smarty.class.php');// smarty class file
 
-define("T_PATH", 'templates/');					// old templates path
+define("T_PATH", 		'templates/');			// old templates path
+
+// no debug info from this methods/functions
+$hide_debug_from=array( "press_user:press_user",
+						"press_user:auth",
+						"template:add_form_field",
+						);
 
 
 /* load main config */
 if ($_SERVER["SERVER_ADDR"]==LOCALHOSTIP) {
 	// localhost
-	define("CONFIGFILE", 'localhost.conf.ini');			// main config file		
+	define("CONFIGFILE", 'localhost.conf.ini');	// main config file		
 } else {
-	define("CONFIGFILE", 'main.conf.ini');			// main config file
+	define("CONFIGFILE", 'main.conf.ini');		// main config file
 }
 
 if (in_array("config", $TODO)) {
@@ -130,27 +140,47 @@ if (in_array("mysql", $TODO)) {
 	}//	access data 
 	#echo "<br>MySQL Version:".$SQL->VERSION."<br>";
 	
-	/* --------- press ---------------*/
-	// SQL
-	require(I_PATH.MYSQLFILE);
-	if (!$SQL = new MySQL($db)) {           // create object
-	    die ("<span style=\"color:red;\">database connection could not be etablished!<br>"
-			."Please check main config in file '".C_PATH.MYSQLFILE."' section '[db]'</span>");
-	}//	access data 
-/*
-	// PUSER
-	if (!$PUSER = new press_user($db)) {           // create object
-    die ("<span style=\"color:red;\">database connection could not be etablished!<br>"
-		."Please check main config in file '".C_PATH.MYSQLFILE."' section '[db]'</span>");
-	}//	access data 
-	// PSITES
-	if (!$PSITES = new press_sites($SQL)) {           // create object
-    die ("<span style=\"color:red;\">database connection could not be etablished!<br>"
-		."Please check main config in file '".C_PATH.MYSQLFILE."' section '[db]'</span>");
-	}//	access data 
-	*/
 }
 
+
+/* export creator */
+if($SQL->change_db($VAR['db']['dbase']))
+{
+	$sql = "SHOW TABLES";
+	$SQL->set_select_type(MYSQL_ASSOC);
+	$res = $SQL->query($sql);
+	if($res==false) {
+		die ("<p>MySQL returns an error while '$sql'<p>".$SQL->error_no. "[".$SQL->error_msg."]");
+	}
+	// export tables...
+	if (in_array("export_tables", $TODO)) 
+	{
+		echo "<pre>";
+		if(!$fh = fopen(C_PATH.TABLESFILE,"w")) {
+			die("Es besteht kein Schreibzugriff auf ".C_PATH.TABLESFILE.". Dieser ist aber f&uuml;ür den Export der Tabellenbeschreibung erforderlich.");	
+		} 
+		foreach($res as $table) {
+			$sql	=	"DESCRIBE ".$table[0];				// catch description
+			$tabler =	$SQL->query($sql);
+			echo "\$table_definition_['".$table[0]."']=".var_export($tabler,1)."\n";
+		}
+		
+	}
+	
+}
+else {	die("<b>Auf die in der Konfigurationsdatei (".C_PATH.CONFIGFILE.") angegebene Datenbank (".$VAR['db']['dbase'].") besteht kein Zugriff. " .
+		"</b><p>Due to a configurational problem accessing the database is currently impossible." .
+		"<p>MySQL meldet: ".$SQL->error_no. "[".$SQL->error_msg."]" .
+				"</p><p>" .
+				"Haben Sie das System bereits <a href='install/'>installiert?</a>");}
+
+
+
+/*foreach()
+ 
+$sql	=	"DESCRIBE ".$val;				// catch description
+$res	=	$SQL->query($sql);
+*/
 /* check database, all tables */
 if (in_array("check_tables", $TODO)) {
 	if (!in_array("mysql", $TODO)) {
@@ -170,7 +200,7 @@ if (in_array("check_tables", $TODO)) {
 					
 			// uncomment this line to get a database structure dump 
 					echo "<pre>".$VAR['tables'][$key]."\n\n";var_export($res);echo "\n\n</pre>";
-			
+					
 					if ($table_definition_[$key]!=$res) {
 					    $error_table	.=	$and.$VAR['tables'][$key]." [".$key."]"; $and = " and ";
 					}
@@ -206,13 +236,17 @@ if (in_array("debug", $TODO)) {
 	}
 	require I_PATH.DEBUGGERFILE;
 	
-	$DBG = new Debug(DEBUGGER, false);			//	0-debugger off / 1- debugger on | 1file41ip:false
-	$DBG->filelink			= 0;		// show link to debug file in html page
-	//old: $DBG->init();					//	debugger start
+	$DBG = new Debug(DEBUGGER, false);	//	0-debugger off / 1- debugger on | 1 file 4 1 ip:false
+	$DBG->filelink			= 1;		// show link to debug file in html page
+	
 	$DBG->hide("init");				// functions not to show in the debug log
-	$DBG->hide("press_user:press_user");
-	$DBG->hide("press_user:auth");
-	$DBG->hide("template:add_form_field");
+	foreach($hide_debug_from as $m) {
+		$DBG->hide($m);	
+	}
+
+#	$DBG->hide("press_user:press_user");
+#	$DBG->hide("press_user:auth");
+#	$DBG->hide("template:add_form_field");
 
 	$ERRLOG = new errorlog();
 	

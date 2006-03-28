@@ -7,27 +7,29 @@
  * - create user
  * - create tables
  */
-/* show only runtime errors*/
-error_reporting(//E_ALL);// E_ALL -> All Errorm, hint, warnings ...
-E_ERROR | E_PARSE);
+/* Fehlermeldungen unterdrücken */
+error_reporting(//E_ALL);//  -> Alle Fehler (debugging)
+	E_ERROR | E_PARSE); // -> wichtige Fehler.
 
 require_once ("../include/init.inc.php");
-/* Master Connection - root? database access, privileged user
- * This USER must exist!
+/* Previligierte Datenbankverbindung
+ * Dieser "root" Benutzer ist notwendig, um den nicht-previligierten Nutzer
+ * und die neue Datenbank anlegen zu lassen.
+ * Andernfalls muss $db2[create] und $create auf false gesetzt werden  
  */
 $db['user'] = "root";
 $db['pass'] = "721921";
-$db['dbg'] = 0; 		// 0=silent (debug mode of mysql-class) 
+$db['dbg']	= 0; 		// 0=silent (debug mode of mysql-class) 
 
 /* database stuff */
-$db['server'] = "localhost";
-$db['dbase'] = "mysql"; // name of database I should use for testing (only read-access)
+$db['server']	= "localhost";
+$db['dbase']	= "mysql"; // Datenbank, die zu testzwecken benutzt wird (keine Schreiboperationen)
 
-/* USER Connection - unipress stuff, unprivileged user */
-$db2 = $db; 				// copy
-//$override	 = true;		// try to go on, if an error occurs
+/* Daten des unpreviligierten DB Nutzers */
+$db2 = $db; 				// kopiere Rahmendaten (wie Server...)
 $drop_olduser= init("drop_user","r",true);			// drop old user, if exist (for this db)
 $create		 = init("create_user","r",true);		// create this user (for this db)
+/* Zugangsdaten unprev. Benutzer */
 $db2['user'] = init("user","r","unipressuserd");
 $db2['pass'] = init("pass","r","up9283");
 
@@ -38,11 +40,15 @@ $db2['create_T']=init("create_t","r",true);		// create tables, true is recomment
 $db2['create_AU']=init("create_a","r",true);		// create Adminuser (user. admin, pass: adminpass)
 
 $fullpath = "/home/cb/workspace/unipress/"; // full path to installation
+
 /***************************************************************************/
-/* do not modify anything below! */
-define("GOOD","<span style='color:green;font-weight:bold;'>Gut</span>");
+/*                     do not modify anything below!                       */
+/***************************************************************************/
+
+define("GOOD","<span style='color:green;font-weight:bold;'>OK</span>");
 define("OK","<span style='color:black;background-color:yellow;'>OK</span>");
 define("BAD","<span style='color:red;font-weight:bold;'>Schlecht!</span>");
+define("CONFIGFILE","../configs/main.conf.ini");
 /* ------------------------------------------------------------------------*/
 echo "<html><head><title>Installer V0.1alpha - Unipress</title>" .
 	"<link rel=\"stylesheet\" type=\"text/css\" href=\"mycss.css\" />".
@@ -59,14 +65,14 @@ if(!(array_key_exists("installation",$_REQUEST) && $_REQUEST['installation']=="s
 	/* FileSystem Test*/
 	require_once("../include/check_writeable.inc.php");
 	
-	$Clogdir = check_writeable($fullpath, "logs",false)==true ? GOOD : BAD . " \n\t <span class='hint'>Ändern mit: chmod 777 logs/</span>\n";
-	$Cuploaddir = check_writeable($fullpath, "uploaded",false)==true ? GOOD : BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 uploaded/</span>\n";
-	$Csettings = check_writeable($fullpath, "configs/main.conf.ini",false)==true ? GOOD : BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 configs/main.conf.ini/</span>\n";
+	$Clogdir = check_writeable($fullpath, "logs",false)==true ? GOOD : "Nein, " .BAD . " \n\t <span class='hint'>Ändern mit: chmod 777 logs/</span>\n";
+	$Cuploaddir = check_writeable($fullpath, "uploaded",false)==true ? GOOD : "Nein, " .BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 uploaded/</span>\n";
+	$Csettings = is_writable(CONFIGFILE)==true ? GOOD : "Nein, " .BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 configs/main.conf.ini/</span>\n";
 	if($Clogdir!=GOOD || $Cuploaddir!=GOOD ||  $Csettings!=GOOD) { $STOPP = true; }
 	echo "\n\nDateisystem" .
-			"\n\tlog-Verzeichnis ist beschreibbar\t".$Clogdir .
-			"\n\tupload-Verzeichnis ist beschreibbar\t".$Cuploaddir;
-			"\n\\Einstellungsdatei ist beschreibbar\t".$Csettings;
+			"\n\tlog-Verzeichnis ist beschreibbar?\t".$Clogdir .
+			"\n\tupload-Verzeichnis ist beschreibbar?\t".$Cuploaddir.
+			"\n\tEinstellungsdatei ist beschreibbar?\t".$Csettings;
 	
 	/* MYSQL Test */
 	require_once("../include/cbmysql.class.php");
@@ -166,7 +172,7 @@ if ($db2['create']) {
 	echo "<br>Creating Database " . $db2['dbase'] . " ... ";
 	$databasename =        $db2['dbase'];
 	include "create_database.php";
-	if ($SQL->error_no!=0) die(" failed! -&gt; ".$SQL->error_msg); else echo "ok";
+	if ($SQL->error_no!=0) die(BAD . " failed! -&gt; ".$SQL->error_msg); else echo GOOD;
 } else {
 	echo "<br>Testing Database " . $db2['dbase']. " ... ";
 	$databasename =        $db2['dbase'];
@@ -176,7 +182,7 @@ if ($db2['create']) {
 	while (list(,$a)=each($ret))
 		if($a[0]==$databasename) $found=true;
 	if ($found==false)
-		die(" database could not be found. Check your config!");	
+		die(BAD . " database could not be found. Check your config!");	
 }
 
 if ($create) {
@@ -185,7 +191,7 @@ if ($create) {
 	$username		=		$db2['user'];
 	$userpass		=		$db2['pass'];
 	include "create_user.php";
-	if ($SQL->error_no!=0) die(" failed! -&gt; ".$SQL->error_msg); else echo "ok";
+	if ($SQL->error_no!=0) die(BAD . " failed! -&gt; ".$SQL->error_msg); else echo GOOD;
 }
 
 if(defined('LOAD_MYSQL') && $create) echo "<br>If there occured an custom error without " .
@@ -199,7 +205,7 @@ if ($SQL->error_no!=0)
     die ("<span style=\"color:red;\">User connection to database could " .
 	    		"not be etablished!<br>"
 			."Please check your config in ".__FILE__." !</span>");
-else echo "ok";
+else echo GOOD;
 
 if($db2['create_T']){
 	echo "<br>Creating Tables ... ";
@@ -209,30 +215,30 @@ if($db2['create_T']){
 		#	echo "<br>".$q;
 			if(!$SQL->query($q)) die( "<br>Error while doing: " . $q . " -&gt; ".$SQL->error_msg);
 		}
-	echo "ok";
+	echo GOOD;
 }
 // Create Admin User
 if($db2['create_AU']) {
 	echo "<br>Creating Admin User with (admin and adminpass) ... "; 
 	$SQL->insert("INSERT INTO `".$prefix."press_user` ( `id` , `name` , `pass` , `counter` , `session` , `auth` ) VALUES ('', 'admin', '".sha1("adminpass")."', '0', '',  '0');");
 	$SQL->insert("INSERT INTO `".$prefix."press_admins` ( `id`  ) VALUES ('1');");
-	echo " done.";
+	echo GOOD;
 }
+
 // writing mysql_zugangsdaten into file..
-$fh = fopen("configs/main.conf.ini");
-/*
-[db]
-user	=	"cbeckersql2"
-pass	=	"321321"
-dbase	=	"cbeckersql2"
-tableprefix	=	"";
-server	=	"localhost"
-dbg		=	0
-
-[tables]
-entries	=	"entries"
-
-*/
+	echo "<br>Schreibe Konfigurationsdatei '".CONFIGFILE."' ... ";
+$fh = fopen(CONFIGFILE,"w");
+if(fwrite($fh, "[db]\n" .
+		"user=\"".$db2['user']."\"\n" .
+		"pass=\"".$db2['pass']."\"\n" .
+		"dbase=\"".$db2['dbase']."\"\n" .
+		"tableprefix=\"".$prefix."\"\n" .
+		"server=\"".$db2['server']."\"\n" .
+		"dbg=0\n" .
+		"[tables]\n" . 
+		"entries	=	\"entries\""
+		)) echo GOOD; else echo BAD;
+fclose($fh);
 echo "<br><b>Installation done so far.</b><p>" .
 		"Go to <a href='../'>homepage</a> to start.";
 

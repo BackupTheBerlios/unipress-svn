@@ -33,7 +33,7 @@ $html['content']  = "
 
 
 // Fill into Template
-require_once(I_PATH . "template.class.php");
+require_once(I_PATH . "template2.class.php");
 $T 			= new template( & $DBG );
 $T->add_title("Benutzer &Auml;ndern");
 $T->add_js("js/sitelist.js");

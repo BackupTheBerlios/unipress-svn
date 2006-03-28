@@ -1,6 +1,7 @@
 <?php
 // $Id$
-
+// Bereich ändern
+// TODO: auf template 2 umstellen!
 require_once(I_PATH . "template.class.php");
 require_once(I_PATH . "press_sites.class.php");
 $T			= new template($DBG);
@@ -76,7 +77,7 @@ if ($id==0) {
 
 
 // fill template head
-$T->add_title("Bereich ".$preset['name']." &Auml&ndern");
+$T->add_title("Bereich ".$preset['name']." ".$what_to_do);
 $T->add_js("js/site_check.js");
 $T->add_js("js/site_examples.js");
 $T->add_css("css/nentry.css");

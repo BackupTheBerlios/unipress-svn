@@ -5,15 +5,15 @@ $menu	=	($_SESSION['admin']==true) ? parse_ini_file(C_PATH.'menu.ini',1):parse_i
 // detect menupoint
 // first GET value
 $actual  =	init("menu","r","");
-$DBG->watch_var("menu key exists",array_key_exists($actual,$menu ));
-
+$DBG->watch_var("menu key ($actual) exists",array_key_exists($actual,$menu ));
+/*
 if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; 
 else {
 	if ($actual!="") $ERRLOG->entry("Access violation. Normal user tried to access: $actual");
 	$menu	=	&$menu['main'];
 	$actual = "main";
 }
-
+*/
 // build links
 $DBG->watch_var("act. menu",$actual);	// write var to debug log
 $DBG->watch_var("menu",$menu);
@@ -84,6 +84,14 @@ switch ($actual) {
 		// test and throw errors
 				// test input
 		include (T_PATH."entries_edit.php");
+	break;
+	
+	/* test*/
+	case "getall":
+		require(I_PATH."press_output.class.php");
+		$PO=new press_output($SQL,$DBG);
+		echo $PO->show_all4(init("kuerzel","r",""));
+		$PO->make_static(init("kuerzel","r",""));
 	break;
 }
 ?>

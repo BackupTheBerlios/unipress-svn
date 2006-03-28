@@ -1,6 +1,7 @@
 <?php
 // $Id$
 // Login Seite
+//
 if ($error) {
 	$error = "<tr><td colspan='2' bgcolor='red'>".$error."</td></tr>";	
 }

@@ -106,7 +106,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"label"=>"<u>Z</u>ielbereiche ausw&auml;hlen", 
 											"key"=>"q", 
 											"type"=>"site_select",
-											"values"=>$PS->get_all(),
+											"values"=>$PS->get_all($_SESSION['id']),
 											"help"=>"W&auml;hlen Sie die Bereiche aus, auf denen sp&auml;ter der Artikel erscheinen soll.\nEine Mehrfachauswahl mit mit gedr&uuml;ckter STRG-Taste m&ouml;glich",
 											) 
 						);						
@@ -129,7 +129,21 @@ if ($send==1) {
 	$r = $T->check_form(); 
 	if ($r) {
 		$PE->import($r) && $PE->write();
-		echo $PE->error_cmsg;
+		if(empty($PE->error_cmsg)) {
+			$T2	= new template( $DBG );
+			$T2->add_title("Presseintrag erstellen");
+			$T2->add_css("css/nentry.css");
+			$T2->add_menu($menu_links);
+			$T2->leadin("<div class=\"error\">" . $formerror['main']."</div>" .
+						"<div class=\"status\">" . $status . "</div>" .
+						"<table summary=\"form table (as layout)\" width=\"100%\">\n");
+			$T2->add_content("<tr><td>Der Eintrag wurde erfolgreich angelegt.</td></tr>" .
+					"<tr><td>M&ouml;chten Sie einen <a href='?menu=entry'>weiteren Eintrag anlegen</a>" .
+					" oder " .
+					"<a href='?menu=logout'>sich abmelden</a>?</td></tr> ");
+			$T2->append("</table>");
+			$T2->show();			
+		}
 	}
 } else {
 	$T->show();

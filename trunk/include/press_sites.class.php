@@ -186,10 +186,21 @@ class press_sites
 		return $r;
 	}
 	
-	function get_all() {
+	function get_all($uid=1) {
 		$this->DBG->enter_method();
 		$this->conn->set_select_type(MYSQL_BOTH);
-		$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
+		// user?
+		$where = "";
+		if($uid!=1) $where = "WHERE r.uid= ".$uid;
+		
+		$sql = "SELECT s.id AS value ,concat(s.name,' \(', s.kuerzel,'\)') as name  " .
+				"FROM ".$this->prefix."press_us_rel AS r " .
+				"LEFT JOIN ".$this->prefix."press_sites AS s " .
+				"ON r.sid=s.id " .
+				$where.
+				" ORDER by s.name ASC";
+				
+		//$sql = "SELECT id as value, concat(name,' \(', kuerzel,'\)') as name FROM ".$this->prefix."press_sites ORDER BY name ASC";
 		$this->DBG->sql($sql);
 		$ret = $this->conn->select( $sql );
 		$this->DBG->watch_var("# values", count($ret));

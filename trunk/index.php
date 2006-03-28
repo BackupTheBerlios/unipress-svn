@@ -6,8 +6,8 @@
  *
  * Christoph Becker <mail@ch-becker.de>
  *
- * June 2005 - February 2006
- * Version 0.1.1 
+ * June 2005 - March 2006
+ * 
  * 
  */
         
@@ -18,12 +18,12 @@ require_once(I_PATH."press_user.class.php");
 $PU	= new press_user( &$SQL , &$DBG, new auth());
 
 // Anmeldung - session
-$DBG->send_message("* * * Anmeldung * * *");
-$authenticated = $PU->auth();
+$DBG->send_message("* * * Anmeldung * * *");// <--- Debug-Meldung
+$authenticated = $PU->auth();// <- Anmeldedaten prüfen (Formular oder Session)
 
 // show login form
 if($authenticated==false)  {
-	include (T_PATH."login.php");
+	include (T_PATH."login.php");// <-Anmeldeformular
 	$DBG->send_message("* * * Anmeldung zurückgewiesen * * * died.");
 	// stop debugging, close mysql-connection if wanted
 	include("init.php");

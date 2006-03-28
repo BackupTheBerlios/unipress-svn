@@ -206,10 +206,14 @@ class press_entry
 	}
 
 	// get source list
-	function get_source_list() {
+	function get_source_list($uid=1) {
+		$this->DBG->enter_method();
 		$this->conn->set_select_type(MYSQL_BOTH);
+		
 		$sql = "SELECT id AS value ,name FROM ".$this->prefix."press_sources ORDER by name ASC";
+		
 		$ret = $this->conn->select( $sql );
+		$this->DBG->leave_method($ret);
 		return $ret;
 	}
 	

@@ -59,7 +59,7 @@ if ($id==0) {
 
 
 // fill template head
-$T->add_title("Benutzer ".$preset['name']." &Auml;ndern");
+$T->add_title("Benutzer ".$preset['name']." ".$what_to_do);
 /*$T->add_js("js/site_check.js");
 $T->add_js("js/site_examples.js");*/
 $T->add_css("css/nentry.css");

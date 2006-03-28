@@ -18,6 +18,7 @@
  */
 require_once I_PATH."htmlscripts.inc.php";
 
+
 class template {
 	// all private
 	var $js = array ();
