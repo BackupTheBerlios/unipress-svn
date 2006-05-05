@@ -186,17 +186,36 @@ class press_sites
 		return $r;
 	}
 	
+	function get_all_kuerzel() {
+		$this->DBG->enter_method();
+		$this->conn->set_select_type(MYSQL_BOTH);
+		$this->conn->set_field_dimension(1);
+		$sql = "SELECT kuerzel FROM ".$this->prefix."press_sites " .
+				"ORDER BY kuerzel ASC";
+		$this->DBG->sql($sql);
+		$ret = $this->conn->select( $sql );
+		$this->DBG->watch_var("# values", count($ret));
+		$this->DBG->leave_method($ret);
+		$this->conn->set_field_dimension(2);
+		return $ret;
+	}
+	
 	function get_all($uid=1) {
 		$this->DBG->enter_method();
 		$this->conn->set_select_type(MYSQL_BOTH);
 		// user?
-		$where = "";
-		if($uid!=1) $where = "WHERE r.uid= ".$uid;
+		$where = ""; $join = "";
+		$from = "FROM ".$this->prefix."press_sites AS s ";
+		if($uid!=1) {
+			$where = "WHERE r.uid= ".$uid;
+			$join  = "LEFT JOIN ".$this->prefix."press_sites AS s " .
+				"ON r.sid=s.id ";
+			$from = "FROM ".$this->prefix."press_us_rel AS r ";
+		}
 		
 		$sql = "SELECT s.id AS value ,concat(s.name,' \(', s.kuerzel,'\)') as name  " .
-				"FROM ".$this->prefix."press_us_rel AS r " .
-				"LEFT JOIN ".$this->prefix."press_sites AS s " .
-				"ON r.sid=s.id " .
+				$from.
+				$join .
 				$where.
 				" ORDER by s.name ASC";
 				

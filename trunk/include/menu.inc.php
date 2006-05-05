@@ -6,19 +6,25 @@ $menu	=	($_SESSION['admin']==true) ? parse_ini_file(C_PATH.'menu.ini',1):parse_i
 // first GET value
 $actual  =	init("menu","r","");
 $DBG->watch_var("menu key ($actual) exists",array_key_exists($actual,$menu ));
-/*
-if (array_key_exists($actual,$menu )) $menu	=	&$menu[$actual]; 
-else {
+
+if (array_key_exists($actual,$menu ))
+{
+	// this bad style because of php 3.8.0 and below
+	$m = &$menu[$actual];
+	$menu = $m;
+	unset($m);
+}  else {
 	if ($actual!="") $ERRLOG->entry("Access violation. Normal user tried to access: $actual");
 	$menu	=	&$menu['main'];
 	$actual = "main";
 }
-*/
+
 // build links
 $DBG->watch_var("act. menu",$actual);	// write var to debug log
 $DBG->watch_var("menu",$menu);
 reset($menu);
 $i=0;
+
 $menu_links="<a href='index.php' accesskey='0'></a><a href='index.php?menu=ahelp' accesskey='5'></a>";
 while (list($key, $val) = each($menu)) {
 	if ($key==$actual) {$val = "<strong>".$val."</strong>";}
@@ -26,9 +32,11 @@ while (list($key, $val) = each($menu)) {
     $menu_links.= " <a href='?menu=$key' accesskey='$i'>$val</a><br />";
 }
 // posts
+$o="";
 while (list($key, $val) = each($_REQUEST)) {
     $o.= "<br>$key := $val";
 }
+
 $o="";
 
 // menu
@@ -71,8 +79,11 @@ switch ($actual) {
 	break; 
 	
 	/* ----- user ----- */
-	case "newu":
 	case "editu":
+		require (T_PATH."user_edit.php");
+		break;
+	case "newu":include (T_PATH."user_edit.php");
+	
 	case "deluser":
 		// edit an old site
 		include (T_PATH."user_edit.php");

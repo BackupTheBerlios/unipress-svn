@@ -12,21 +12,24 @@ $PU			= new press_user( &$SQL , &$DBG, new auth()); //&$AUTH);
 $PS			= new press_sites( &$SQL , &$DBG);
 #$DBG->watch_var("Files", $_FILES);
 
+$DBG->send_message("Initialisierung ok");
 
 
 // request infos
 $id	=		init("id","gp",0); // cast for member method
 $send	=	init("send");
+
 // password policy
 $pass_policy = $PU->get_password_policy();
 
-
-	// debug
-	$DBG->watch_var("_id",$id);
-	$DBG->watch_var("_preset", $preset);
+// debug
+$DBG->watch_var("_id",$id);
+$DBG->watch_var("_preset", $preset);
 
 // check input
 $Ranew		= init("anew","p","nein");
+
+$DBG->send_message("Inputcheck ok");
 
 // prefill
 if ($id==0) {
@@ -53,6 +56,7 @@ if ($id==0) {
 	}
 	 // preset
 	$preset		= $PU->get_info( $id );
+	
 }
  
 
@@ -64,7 +68,7 @@ $T->add_title("Benutzer ".$preset['name']." ".$what_to_do);
 $T->add_js("js/site_examples.js");*/
 $T->add_css("css/nentry.css");
 $T->add_hidden_field("id",$id);
-$T->add_hidden_field("menu","editu");// wo geht die reise hin
+$T->add_hidden_field("menu","newu");// wo geht die reise hin
 
 
 // PREFILL -------------------------------------------------------------------
@@ -142,6 +146,7 @@ $html['content']  .=	$T->add_form_field( array("name"=>$name,
 											"key"=>"e", 
 											"type"=>"site_select",
 											"values"=>$PS->get_all(),
+											"prefill" =>$preset['sites'],
 											"help"=>"W&auml;hlen Sie die Bereiche aus, auf die der Benutzer Zugriff erhalten soll.",
 											) 
 						);
@@ -175,10 +180,10 @@ if ($send==1) {
 	$r = $T->check_form(); 
 	if ($r) {
 		echo "checked and ok (".$r.")".
-			"<br>please implement ".$what_to_do;
+			"<br>[MUE01] please implement ".$what_to_do;
 		//$DBG->watch_var("CheckForm",$r);
 		if($PU->import($r,$id) && $PU->write()) 
-			echo "<br>alles ok ($id) ".$PU->error_cmsg; else echo "<br>fehler ($id).. ".$PU->error_cmsg;		
+			echo "<br>[MUE02] alles ok ($id) ".$PU->error_cmsg; else echo "<br>[MUE03] fehler ($id).. ".$PU->error_cmsg;		
 	}
 } else {
 	$T->show();

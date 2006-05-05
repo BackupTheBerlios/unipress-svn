@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*
  2006-02-18
 o changes to 4.0.3
+ +try_persistent is private! and set to false (default)
  +check_mysql_interface tries to (re)load mysql extension
  #debug default_Class_Debug could only be set via Construktors array or
         set_DBG - now it's also possibly to set local $DBG
@@ -325,7 +326,7 @@ if (!defined('CLASS_MYSQLI') && defined('LOAD_MYSQLI')) {
 		 *
 		 * @access private
 		 */
-		VAR $TRY_persistent = true; // Soll versucht werden persistente Verbindungen aufzubauen?
+		VAR $TRY_persistent = false; // Soll versucht werden persistente Verbindungen aufzubauen?
 		// Bei Transaktionen oder Locking nicht sinnvoll!
 
 		VAR $STATUS_persistent = false; // Status, ob eine persistente Verbindung aufgebaut wurde oder oder nicht
@@ -1248,7 +1249,7 @@ int
 	 *
 	 * @access private
 	 */
-	VAR $TRY_persistent = true; // Soll versucht werden persistente Verbindungen aufzubauen?
+	VAR $TRY_persistent = false; // Soll versucht werden persistente Verbindungen aufzubauen?
 	// Bei Transaktionen oder Locking nicht sinnvoll!
 
 	VAR $STATUS_persistent = false;	// Status, ob eine persistente Verbindung aufgebaut wurde oder oder nicht
@@ -1721,10 +1722,10 @@ int
 					// remove ASSOCIATIONs, not needed
 					$data[$count] = $row;
 				} else {
-					if ( $row[1] == $row['INDEX_ASSOCIATION'] ) {
+					if ( array_key_exists("1", $row) && $row[1] == $row['INDEX_ASSOCIATION'] ) {
 						$data[$count] = $row[0];
 					} else {
-						$data[$count] = $row[1];
+						$data[$count] =  array_key_exists("1", $row) ? $row[1] : "" ;
 					}
 				}
 			}

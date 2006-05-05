@@ -200,6 +200,10 @@ class press_user {
 		}
 		// after this point should be no errors!!!!!
 		
+		// del user-site relation!
+		$sql = "DELETE FROM ".$prefix."press_us_rel WHERE uid=".$eid;
+		$this->SQL->query( $sql );
+		
 		// write site_relation
 		// id, site
 		reset ($this->_sites);
@@ -315,8 +319,9 @@ class press_user {
 		$this->DBG->sql($sql);
 		$r['main'] = $ret[0];
 		$r['admin']= $this->is_admin($id);
-		
-		$sql = "SELECT id,name, kuerzel FROM ".$this->_prefix."press_us_rel AS rel " .
+
+		//, name, kuerzel
+		$sql = "SELECT id AS INDEX_ASSOCIATION, id FROM ".$this->_prefix."press_us_rel AS rel " .
 				"LEFT JOIN ".$this->_prefix."press_sites AS s ON rel.sid=s.id " .
 				"WHERE rel.uid=".clean_in($id)." ORDER BY name ASC";
 		$ret = $this->SQL->select($sql);
@@ -328,7 +333,7 @@ class press_user {
 	
 	function check($user, $pass) {
 		$this->DBG->enter_method();
-		$sql = "SELECT auth, pass,id,counter FROM ".$this->prefix."press_user WHERE name='".clean_in($user)."'";
+		$sql = "SELECT auth, pass,id,counter FROM ".$this->_prefix."press_user WHERE name='".clean_in($user)."'";
 		$ret = $this->SQL->select($sql); $data=$ret[0];
 		$this->DBG->watch_var($sql,$ret);
 		
@@ -367,7 +372,7 @@ class press_user {
 	function check_session ($id,$session) {
 		$this->DBG->enter_method();
 		
-		$sql = "SELECT id,session FROM ".$this->prefix."press_user WHERE id='".clean_in($id)."'";
+		$sql = "SELECT id,session FROM ".$this->_prefix."press_user WHERE id='".clean_in($id)."'";
 		$ret = $this->SQL->select($sql); $ret=$ret[0];
 		$this->DBG->watch_var($sql,$ret);
 		if($ret['session']==$session) {$ret=true;} else {$ret=false;}

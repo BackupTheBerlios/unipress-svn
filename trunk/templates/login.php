@@ -2,6 +2,9 @@
 // $Id$
 // Login Seite
 //
+
+$error = init("error","pg","");
+
 if ($error) {
 	$error = "<tr><td colspan='2' bgcolor='red'>".$error."</td></tr>";	
 }
@@ -15,7 +18,7 @@ $html['content']  = "
 				"</td></tr>" .
 				
 				"<tr><td width='100'>&nbsp;</td><td> " .
-				    "<form method=\"post\" action=\"".$PHPSELF."\"><table>".
+				    "<form method=\"post\" action=\"index.php\"><table>".
 				    $error .
     "<tr><td>Benutzername</td><td><input type=\"text\" name=\"username\" /></td></tr>".
     "<tr><td>Passwort</td><td><input type=\"password\" name=\"password\" />" .
@@ -33,7 +36,7 @@ $T 			= new template( & $DBG );
 $T->add_title("Anmeldeseite Pressesystem");
 
 $T->add_css("css/nentry.css");
-$T->add_menu($menu_links);
+//$T->add_menu($menu_links);
 $T->add_content($html['content']);
 $T->show();
 ?>

@@ -209,6 +209,8 @@ class Debug
 	**/
 	var $onefile4oneip; // false means old style!
 	
+	var $blind=0; // Zähler
+	
 	function init() {
 		return $this->Debug();
 	}

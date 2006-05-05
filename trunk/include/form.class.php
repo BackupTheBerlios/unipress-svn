@@ -249,7 +249,6 @@ class FORM
 			$ar['value'] = (!array_key_exists("value",$ar) && (array_key_exists("id",$ar))) ? $ar['id'] :  $ar['value'];
 			if($array_selected && is_array($array_selected))											// wenn es etwas zum selektieren gibt
 			{		
-				
 				$selected = array_key_exists(@$ar["value"],$array_selected)==true ? " selected=\"selected\"" : "";	// wenn die aktuelle Option in $ar_selected vorkommt,
 			} else {																					// dann soll diese Option vorausgew�hlt werden
 				$selected = "";

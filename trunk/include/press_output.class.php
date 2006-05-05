@@ -14,6 +14,8 @@
 */
 
 function wget($url) {
+	if (empty($url)) return "";
+
 	$handle = fopen($url,"r");
 	$buffer = "";
 	while (!feof($handle)) {
@@ -52,7 +54,7 @@ class press_output{
 		// dokument mit header dateien (wenn gegeben)
 		$sql = "SELECT head,foot FROM ".$this->_prefix."press_sites WHERE kuerzel='$kuerzel'";
 		$res = $this->_SQL->select( $sql );
-		print_r($res);
+		//print_r($res);
 		if(!empty($res)) {
 			$head = wget($res[0]['head']);
 			$foot = wget($res[0]['foot']);
@@ -82,6 +84,7 @@ class press_output{
 		}
 		
 		// parse ... this should be made better
+		$pattern="";
 		require ($templatefile); // FIXME: bad style!
 		
 		// now $pattern is defined

@@ -1,0 +1,3 @@
+# deny access from internet! needed not to provide special infos for the masses
+order deny,allow
+deny from all

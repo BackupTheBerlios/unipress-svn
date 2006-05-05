@@ -10,8 +10,7 @@
  * 
  * $Id$
  **/
-error_reporting(E_ERROR//);// 
-| E_WARNING);
+error_reporting(E_ERROR);//| E_WARNING); E_ALL
  
 // already defined?
 if (isset($INITSTART)) {
