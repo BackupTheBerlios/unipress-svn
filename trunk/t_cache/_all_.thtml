@@ -1,10 +1,10 @@
 <?php
-$pattern="<div class='presstitle'>Presseeinträge ##subtitle##</div>##loop-start##
+$pattern="<div class='presstitle'>Presseeintr&auml;ge ##subtitle##</div>##loop-start##
 <div class='pressentry'><div class='pdficon' style='float:left'>
 	<a href='##filename##' class='presslink'><img src='http://localhost/unipress/images/icon-pdf.gif' border='0' alt='pdf'></a>
 	</div>
 	<a href='##filename##' class='presslink'>##title##</a><br>
 	<span class='presssource'>##source##:</span> <span class='pressdate'>##date##</span>
 </div>##loop-end##
-Ende.";
+";
 ?>

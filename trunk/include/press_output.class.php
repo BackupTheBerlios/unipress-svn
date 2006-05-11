@@ -122,7 +122,13 @@ class press_output{
 	}
 	
 	// ersetzt get_all
+	// ja, aber wo?
+	// WER ZUM TEUFEL ruft mich auf?
 	function _get_data($meta=array()){
+		
+		debug_print_backtrace2();
+		die(__METHOD__. "::".__CLASS__."::".__FILE__);
+	
 		$where = " WHERE ";
 		$join  = "";
 		$sort  = " e.date DESC ";

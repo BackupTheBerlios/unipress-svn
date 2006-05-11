@@ -95,22 +95,20 @@ if (in_array("smarty", $TODO)) {
 
 /* Path estimation */
 // check OS
-if (eregi("^win", PHP_OS)) {
+#if (eregi("^win", PHP_OS)) {
 	// Windows found
 	// automatic path determination
 	$PATH	=	substr(__FILE__, 0, strrpos( __FILE__, "\\")+1);		// Windows Server
-} else {
+/*} else {
 	// non Windows, *NIX
 	$PATH = substr($_SERVER["SCRIPT_FILENAME"],0, strrpos($_SERVER["SCRIPT_FILENAME"], "/"));
 	//$PATH	=	"";
-}
-
-#echo $PATH;
+}*/
 
 // check path
 if ($PATH=="") {
 	// empty path is impossible
-	die("path is empty, please fill in absolute server path in init.php, line ".(__LINE__-5));
+	die("path is empty ($PATH), please fill in absolute server path in ".__FILE__.", line ".(__LINE__));
 }
 
 /* start smarty */

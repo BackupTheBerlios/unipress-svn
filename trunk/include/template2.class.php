@@ -195,7 +195,7 @@ class template {
 			$this->user_content.=$this->form_row($v);	
 		
 		
-		// men¸
+		// men√º
 		$menu = "";
 		if(strlen($this->menu)>1) $menu = "<span id=\"menu\">Men&uuml;</span><br />".$this->menu;
 		
@@ -341,6 +341,7 @@ class template {
 				$r = "\n".$field['help'];
 				break;
 			
+			case 'link' :
 			case 'text' :
 				$prefill = ($prefill == "") ? "" : " value=\"".$prefill."\"";
 				$r = "\n<input type=\"text\" size=\"40\" name=\"".$field['name']."\" ".$prefill." id=\"".$field['name']."\" ".$helptip_focus." />";
@@ -438,7 +439,7 @@ class template {
 		return $prepare_row_start.$r.$prepare_row_end;
 	}
 
-	// TODO: in einzelfunktionen auflˆsen!
+	// TODO: in einzelfunktionen aufl√∂sen!
 	function check_form() {
 		$this->DBG->enter_method();
 		
@@ -539,13 +540,13 @@ class template {
 					/* Bedingungsliste */
 					// wert?
 					(boolean) $wert = ( strlen(trim($formval)) > 0 ); $this->DBG->watch_var("wert",$wert);
-					// abh‰ngigkeit
+					// abh√§ngigkeit
 					(boolean) $or = array_key_exists('_or', $val);$this->DBG->watch_var("or",$or);
-					// abh‰ngiges feld hat wert (hat keinen fehler)
+					// abh√§ngiges feld hat wert (hat keinen fehler)
 					(boolean) $or_wert = $or ? !array_key_exists($val['_or'],$this->fielderrors) : false; $this->DBG->watch_var("or_wert",$or_wert);
 					// besteht eine min/max bedingung?
 					(boolean) $minmax = array_key_exists('minmax',$val) ? true : false;
-					// ist feld optional? (dann darf es leer sein, oder muss die min/max bedingung erf¸llen)
+					// ist feld optional? (dann darf es leer sein, oder muss die min/max bedingung erf√ºllen)
 					(boolean) $optional = (array_key_exists('optional',$val) && $val['optional']==true)? true : false;
 					
 					
@@ -562,9 +563,9 @@ class template {
 							//$this->fielderrors[$val['name']]
 							$error = "Dieses Feld wird ignoriert werden, da bereits '".$or_field_name."' ausgef&uuml;llt ist.";
 						} else {
-							// genau richtig, fehler lˆschen
+							// genau richtig, fehler l√∂schen
 							$error = $this->_check_minmax_length($val, $formval);
-							if(!$error) $this->fielderrors[$val['_or']]= false; // fehler lˆschen
+							if(!$error) $this->fielderrors[$val['_or']]= false; // fehler l√∂schen
 						}
 					} 
 					if ( !$wert && $or && !$or_wert ) {
@@ -575,7 +576,7 @@ class template {
 					if ( !$wert && !$or && !$optional) {
 						$error= "Dieses Feld muss  ausgef&uuml;llt werden. ";							
 					}
-					// kein Wert aber L‰ngendefinition vorhanden 
+					// kein Wert aber L√§ngendefinition vorhanden 
 					if ( !$wert && $error && $minmax) $error.=" (min. ".$val['minmax']['min']." und max. ".$val['minmax']['max']." Zeichen)";
 					
 					// central error or value setter
@@ -627,7 +628,7 @@ class template {
 		$max = $val['minmax']['max'];
 		
 		$mm_error=false;
-		if ( strlen($wert)>$max)  $mm_error = "Dieses Feld darf hˆchstens ".$max." Zeichen lang sein.";		
+		if ( strlen($wert)>$max)  $mm_error = "Dieses Feld darf h√∂chstens ".$max." Zeichen lang sein.";		
 		if ( strlen($wert)<$min)  $mm_error = "Dieses Feld muss mindestens ".$min." Zeichen lang sein.";
 		$this->DBG->leave_method($mm_error);
 		return $mm_error;
@@ -652,9 +653,9 @@ class template {
 		return $value;
 	}
 
-	function check_date($d) {
+	function check_date($d, $dateform="german") {
 		$this->DBG->enter_method();
-		$dateform	=	"german"; 		// what do i suppose, which form i got
+		//$dateform	=	"german"; 		// what do i suppose, which form i got
 		$buffer 	=	$d;				// save for error_msg
 		$preset_year=	strftime("%Y");	// with current year
 		
@@ -680,7 +681,7 @@ class template {
 		
 		
 		if ($c<2 || $c>3) {
-			$ret = "Datum ($buffer) ung√ºltig da zuwenige/zuviele Trennzeichen ($c).";
+			$ret = "Datum ($buffer) ungueltig da zuwenige/zuviele Trennzeichen ($c).";
 			$this->DBG->leave_method($ret);
 			return $ret;
 		}
