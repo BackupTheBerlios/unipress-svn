@@ -129,6 +129,7 @@ class press_user {
 			// preload from db
 			$preload = $this->get_info($has_id);
 			$this->_id = $preload;
+			$this->DBG->watch_var("User-ID", $preload);
 		} /*
 			if($preload==false) return $this->error(10,"Benutzer existiert nicht.");
 			// overwrite with formdata
@@ -144,11 +145,19 @@ class press_user {
 				} else {
 					$handler = "add_".$key;
 				}
-				// error?
+				
 				$reti = $this->$handler($val);
-				if(!empty($val) && $has_id==0) { 
+				
+				// Fehlerbehandlung 1 (wofür?)
+				// Wenn Wert vorhanden und ID nicht ABER ein Fehler auftrat...
+				if(!empty($val) && $has_id==0 ) { 
 					if(!$reti) return $this->error(10,"Fehler bei $handler mit $val");
 				}
+				// Gab es nicht doch Fehler...
+				if( $reti == false ) { 
+					return $this->error(10,"Fehler bei $handler mit $val -- ".$this->error_cmsg);
+				}
+				
 				$this->DBG->watch_var("Key",$key);
 				$this->DBG->watch_var("Handler",$handler);
 				$this->DBG->watch_var("Value",$val);
@@ -175,7 +184,7 @@ class press_user {
 			}
 			if (empty($this->_name)) 		return $this->error(10, "Benutzername");
 			if (empty($this->_pass) && $this->_auth==0) return $this->error(10, "Passwort für lokalen Benutzer");
-			if (empty($this->_auth))		return $this->error(10, "Authentifizierungsmechanismus");
+			if (empty($this->_auth) && $this->_auth!=0) return $this->error(10, "Authentifizierungsmechanismus");
 			if (empty($this->_admin)) 		return $this->error(10, "Administratorflag");
 		} else {
 		 	$and = "";
@@ -186,22 +195,33 @@ class press_user {
 		} 
 		
 		// write main entry
+		$this->DBG->watch_var(__method__."User-ID", $id);
+		$this->DBG->watch_var(__method__."Name", $this->_name);
+		$this->DBG->watch_var(__method__."Pass", $this->_pass);
+		$this->DBG->watch_var(__method__."Auth", $this->_auth);
+		
+		
 		// id  	 name  	 pass  	 counter  	 session  	 auth
-		if($this->_id==0) {
+		if($id==0) {
 			$sql = "INSERT INTO ".$prefix."press_user (id, name, pass, auth) " .
 					"VALUES ('','".$this->_name."','".sha1($this->_pass) . 
 					"',".$this->_auth.")";
+			$this->DBG->sql ( $sql );
 			$eid  = $this->SQL->insert( $sql );
 		} elseif($set!="") {
 			$sql = "UPDATE ".$prefix."press_user SET ".$set
 					." WHERE id=".$id;
 			$eid	= $id;
-			$eid  = $this->SQL->update( $sql );
+			$this->DBG->sql ( $sql );
+			//$eid  = 
+			$this->SQL->update( $sql );
+			
 		}
 		// after this point should be no errors!!!!!
 		
 		// del user-site relation!
 		$sql = "DELETE FROM ".$prefix."press_us_rel WHERE uid=".$eid;
+		$this->DBG->sql ( $sql );
 		$this->SQL->query( $sql );
 		
 		// write site_relation
@@ -209,21 +229,27 @@ class press_user {
 		reset ($this->_sites);
 		
 		// write user-site relation
+		$this->DBG->watch_var("Seiten",$this->_sites);
 		while (list (,$val) = each ($this->_sites)) {
 			if($eid>0){
 				$sql = "INSERT INTO ".$prefix."press_us_rel (uid, sid) VALUES (".$eid.", ".$val.")";
+				$this->DBG->sql ( $sql );
 				$id  = $this->SQL->insert( $sql );
 				if(!$id) $this->error(10, "User($eid)-Site($val)-Relation konnte nicht geschrieben werden.");
 			}
 		}
 		
-		// remove admin state (always)
+		
+		// remove admin state (always) - warum?
 		$sql = "DELETE FROM ".$prefix."press_admins WHERE id=".$eid;
+		$this->DBG->sql ( $sql );
 		$this->SQL->delete($sql);
 		
 		// is admin?
-		if(strtolower($this->_admin)=="ja" && $eid>0) {
+		$this->DBG->watch_var("Admin Flag", $this->_admin);
+		if($eid==1 || (strtolower($this->_admin)=="ja" && $eid>0)) {
 			$sql = 	"INSERT INTO ".$prefix."press_admins (id) VALUES (".$eid.")";
+			$this->DBG->sql ( $sql );
 			if(!$this->SQL->insert( $sql )) $this->error(10, "Konnte Admin-Flag nicht setzen.");
 		}
 		
@@ -429,12 +455,14 @@ class press_user {
 	
 	function add_sites($sites=array()) {
 		$this->DBG->enter_method();
-		if(!is_array($sites) || empty($sites)) {
+		if(!is_array($sites) || count($sites)<1) {
 			$r = $this->error(11,"Keine Seitenzuordnung übergeben!");
 			$this->DBG->leave_method($r);
+			$this->DBG->watch_var("hinzugefügte Bereiche", "keine!");
 			return $r;
 		}
 		$this->_sites = $sites;
+		$this->DBG->watch_var("hinzugefügte Bereiche", $this->_sites);
 		$this->DBG->leave_method(true);
 		return true;
 	}

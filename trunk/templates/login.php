@@ -32,7 +32,7 @@ $html['content']  = "
 
 // Fill into Template
 require_once(I_PATH . "template2.class.php");
-$T 			= new template( & $DBG );
+$T= new template( & $DBG );
 $T->add_title("Anmeldeseite Pressesystem");
 
 $T->add_css("css/nentry.css");

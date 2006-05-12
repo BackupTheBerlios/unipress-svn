@@ -2,6 +2,8 @@
 // $Id$
 // Startseite nach Anmeldung
 //
+require_once("include/updatemanager.php");
+//
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
 				<tr><td>" .
@@ -14,8 +16,9 @@ $html['content']  = "
 						"Sie bitte auf 'Abmelden' oder schlie&szlig;en Sie Ihren Browser.</p>" .
 						
 						"Viel Spa&szlig;!" .
-				"</td></tr>
-            </table>";
+				"</td></tr>" .
+				"<tr><td>" . updates() ."</td></tr>" .
+				"</table>";
 
 
 // Fill into Template

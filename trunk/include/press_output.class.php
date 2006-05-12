@@ -121,9 +121,9 @@ class press_output{
 		return $head . $result . $foot;
 	}
 	
-	// ersetzt get_all
-	// ja, aber wo?
-	// WER ZUM TEUFEL ruft mich auf?
+	/*
+	// wäre prima für die suche zu verwenden, oder Monats etc eingrenzungen
+	//
 	function _get_data($meta=array()){
 		
 		debug_print_backtrace2();
@@ -173,7 +173,7 @@ class press_output{
 		$this->_DBG->sql($sql);
 		$ret =	$this->_SQL->select($sql);
 	}
-
+	*/
 	function _get_all($kuerzel="") {
 		
 		$where="";$join="";

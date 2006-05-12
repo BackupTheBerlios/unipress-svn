@@ -29,8 +29,6 @@ $DBG->watch_var("_preset", $preset);
 // check input
 $Ranew		= init("anew","p","nein");
 
-$DBG->send_message("Inputcheck ok");
-
 // prefill
 if ($id==0) {
 	// neuer eintrag
@@ -177,13 +175,25 @@ $T->add_form("index.php", true); // after form:button!
 $T->add_menu($menu_links);
 
 if ($send==1) {
-	$r = $T->check_form(); 
-	if ($r) {
-		echo "checked and ok (".$r.")".
-			"<br>[MUE01] please implement ".$what_to_do;
-		//$DBG->watch_var("CheckForm",$r);
-		if($PU->import($r,$id) && $PU->write()) 
-			echo "<br>[MUE02] alles ok ($id) ".$PU->error_cmsg; else echo "<br>[MUE03] fehler ($id).. ".$PU->error_cmsg;		
+	$r = $T->check_form();
+	
+	$felder = count($r); // bad style; um zu sehen ,ob alle datenfelder da sind.
+	$DBG->watch_var("Felderzahl", $felder);
+	
+	if (($r && $felder == 5) || ($felder == 2 && $id==1)) {
+		if($PU->import($r,$id) && $PU->write()) {
+			$T->add_content("<div class=\"status\">Benutzer $what_to_do erfolgreich<br>In 3 Sekunden gehts zur &Uuml;bersicht.</div>");
+			$T->add_refresh(3,"?menu=user");
+			$T->show();
+		} else {
+			$T->add_content("<div class=\"fehler\">Benutzer $what_to_do fehlerhaft! <br>".$PU->error_cmsg."</div>");
+			$DBG->send_message("[MUE03] fehler ($id).. ".$PU->error_cmsg);
+			$T->show();
+		}
+	} else {
+		$T->add_content("<div class=\"fehler\">Benutzer $what_to_do fehlerhaft! <br>".$PU->error_cmsg."</div>");
+			$DBG->send_message("[MUE03] fehler ($id).. ".$PU->error_cmsg);
+			$T->show();
 	}
 } else {
 	$T->show();

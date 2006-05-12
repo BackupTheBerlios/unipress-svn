@@ -3,44 +3,48 @@
  * $Id$
  *
  * UniPress  Installer
- * - create database
- * - create user
- * - create tables
+ * - creates database
+ * - creates user
+ * - creates tables
  */
+ 
 /* Fehlermeldungen unterdrücken */
-error_reporting(//E_ALL);//  -> Alle Fehler (debugging)
-	E_ERROR | E_PARSE); // -> wichtige Fehler.
+error_reporting( E_ERROR | E_PARSE ); 	// nur wichtige Fehler zeigen.
+//error_reporting( E_ALL ); 				// Alle Fehler zeigen (debugging)
+//error_reporting( 0 );	 				// keine Fehler zeigen (produktion)
 
 require_once ("../include/init.inc.php");
+
 /* Previligierte Datenbankverbindung
  * Dieser "root" Benutzer ist notwendig, um den nicht-previligierten Nutzer
  * und die neue Datenbank anlegen zu lassen.
  * Andernfalls muss $db2[create] und $create auf false gesetzt werden  
  */
-$db['user'] = "mpnq";
-$db['pass'] = "elo6dir";
-$db['dbg']	= 0; 		// 0=silent (debug mode of mysql-class) 
+$db['user'] = "mpnq";			// Benutzername Datenbank
+$db['pass'] = "elo6dir";		// Passwort
+$db['dbg']	= 0; 				// 0=silent (debug mode of mysql-class) 
 
 /* database stuff */
 $db['server']	= "localhost";
-$db['dbase']	= "presse"; // Datenbank, die zu testzwecken benutzt wird (keine Schreiboperationen)
+$db['dbase']	= "presse"; 	// Datenbank, die zu Testzwecken benutzt wird 
+								// (keine Schreiboperationen)
 
 /* Daten des unpreviligierten DB Nutzers */
 $db2 = $db; 			// kopiere Rahmendaten (wie Server...)
-// drop old user, if exist (for this db)
-$drop_olduser= init("drop_user","r",false);			
-// create this user (for this db)
-$create		 = init("create_user","r",false);		
+
+/* fuer previligierte Nutzer:  */
+$drop_olduser= init("drop_user","r",false);   // drop old user, if exist			
+$create		 = init("create_user","r",false); // create this user (for this db)		
 
 /* Zugangsdaten unprev. Benutzer */
 $db2['user'] = init("user","r",$db['user']); //'"unipressuserd");
 $db2['pass'] = init("pass","r",$db['pass']); //"up9283");
 
-$db2['dbase'] = init("dbase","r","presse");// name of database I should use or create
+$db2['dbase'] = init("dbase","r",   "presse01");// name of database I should use or create
 $db2['create']= init("create_db","r",false);  // create database (false, if it already exists)
 $prefix		  = "";			// table prefix
-$db2['create_T']=init("create_t","r",false);	// create tables, true is recommented if no backup should be restored
-$db2['create_AU']=init("create_a","r",false);// create Adminuser (user. admin, pass: adminpass)
+$db2['create_T']=init("create_t","r" ,true);	// create tables, true is recommented if no backup should be restored
+$db2['create_AU']=init("create_a","r",true);// create Adminuser (user. admin, pass: adminpass)
 
 // full path to installation
 if (eregi("^win", PHP_OS)) {
@@ -94,9 +98,10 @@ if(!(array_key_exists("installation",$_REQUEST) && $_REQUEST['installation']=="s
 	
 	$Clogdir = check_writeable($fullpath, "logs",false)==true ? GOOD : "Nein, " .BAD . " \n\t <span class='hint'>Ändern mit: chmod 777 logs/</span>\n";
 	$Cuploaddir = check_writeable($fullpath, "uploaded",false)==true ? GOOD : "Nein, " .BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 uploaded/</span>\n";
+	$Ccachedir = check_writeable($fullpath, "cache",false)==true ? GOOD : "Nein, " .BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 cache/</span>\n";
 	$Csettings = is_writable(CONFIGFILE)==true ? GOOD : "Nein, " .BAD. " \n\t <span class='hint'>Ändern mit: chmod 777 configs/main.conf.ini/</span>\n";
 // E20
-	if($Clogdir!=GOOD || $Cuploaddir!=GOOD ||  $Csettings!=GOOD) { 
+	if($Clogdir!=GOOD || $Cuploaddir!=GOOD||  $Ccachedir!=GOOD ||  $Csettings!=GOOD) { 
 		$STOPP = true;
 		 array_push($stopp_array, "file/dir not writable [E20]");
 	}
@@ -104,6 +109,7 @@ if(!(array_key_exists("installation",$_REQUEST) && $_REQUEST['installation']=="s
 			"\n\tInstallationspfad\t\t\t".$fullpath.
 			"\n\tlog-Verzeichnis ist beschreibbar?\t".$Clogdir .
 			"\n\tupload-Verzeichnis ist beschreibbar?\t".$Cuploaddir.
+			"\n\tCache-Verzeichnis ist beschreibbar?\t".$Ccachedir.
 			"\n\tEinstellungsdatei ist beschreibbar?\t".$Csettings;
 	
 	/* MYSQL Test */

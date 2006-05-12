@@ -11,6 +11,7 @@
  * $Id$
  **/
 error_reporting(E_ERROR);//| E_WARNING); E_ALL
+define(VERSION, "0.0.1");
  
 // already defined?
 if (isset($INITSTART)) {

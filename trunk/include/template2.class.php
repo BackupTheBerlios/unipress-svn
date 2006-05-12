@@ -31,7 +31,6 @@ class template {
 	var $startup_focus = false;
 	var $refresh = "";
 
-	// private
 	var $build_resetcheck = false;
 	var $linebreak = "\n";
 	var $helpers = array ();
@@ -653,6 +652,7 @@ class template {
 		return $value;
 	}
 
+	// dateform = inpput variant of date
 	function check_date($d, $dateform="german") {
 		$this->DBG->enter_method();
 		//$dateform	=	"german"; 		// what do i suppose, which form i got
