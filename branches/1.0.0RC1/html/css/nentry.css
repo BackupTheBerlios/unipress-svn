@@ -1,0 +1,117 @@
+body {
+	background-color: #FAFAFA;
+	color: Black;
+}
+
+td {
+	    font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+input, file, select {
+   border: 1px solid Gray;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 12px;
+}
+.buttons{
+	font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+#tipcontainer {
+    width: 520px;
+    height: 85px;
+	 color:black;
+    background-color: #FFFFF0;
+    border: thin solid #708090;
+}
+#tjavascript {
+	visibility: visible;
+}
+.attention {
+	 visibility: hidden;
+}
+.tip {
+	position: absolute;
+    visibility: hidden;
+	 /* margin-left:-90px;*/
+    width: 330px; /* was 350 */
+   left:156px;
+    height: 75px;
+    padding: 5px; 
+    overflow: auto;
+    font-size: 11px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+#helpicon {
+	position: absolute;
+    visibility: visible;
+	 /* margin-left:-90px;*/
+    width: 30px; /* was 350 */
+   left:486px;
+    height: 75px;
+    padding: 5px; 
+}
+#Fquelle {
+		z-index: 0;
+}
+#Fquelleneu {
+	   visibility: hidden;
+		float: left;
+		z-index: 0;
+}
+
+#tablelayer {
+    width: 510px;
+    border: thin solid #708090;
+    clear: none;
+	 margin-top: 4px;
+    padding: 5px; /*
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;*/
+}
+#navilayer {
+/*  margin-top:-10px;
+  margin-left:-10px;*/
+    width: 130px;
+    height: 75px;
+	 padding:5px;
+   border-right: thin solid #708090;
+
+	float: left;
+	color: Black;
+	background-color: #eeeeee;
+		font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	
+}
+a {
+	text-decoration: none;
+	color: Blue;
+}
+a:hover {
+	text-decoration: underline;
+}
+#menu {
+	font-weight: bold;
+}
+
+#container {
+    width: 520px;
+    height: 360px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -260px; /*das ist die h?lfte der breite... nur im minusbereich*/
+    margin-top: -180px; /*das ist die h?lfte der h?he... nur im minusbereich*/
+	padding:5px;
+   border: thin solid #708090;
+	background-color: White;
+}
+#sendbuttons {
+	
+	width:100%;text-align:right;padding:1px;
+}
+#link {
+	border: thin dashed Gray;
+}

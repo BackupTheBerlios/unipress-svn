@@ -1,0 +1,175 @@
+body {
+	background-color: #FAFAFA;
+	color: Black;
+}
+
+
+#tipcontainer {
+    width: 49.6em;
+    height: 7em;
+    padding:0em;
+	color:black;
+    background-color: #FFFFF0;
+    border: thin solid green;
+}
+
+
+#helpicon {
+	position: absolute;
+    visibility: visible;
+    width: 30px;
+	left:486px;
+    height: 75px;
+    padding: 5px; 
+
+    background-color: red;
+}
+
+#tjavascript {
+	visibility: visible;
+}
+
+
+.attention {
+	 visibility: hidden;
+}
+
+
+#tablelayer {
+    width: 80em;
+    border: thin solid #708090;
+    clear: none;
+	 margin-top: 4px;
+    padding: 5px; /*
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;*/
+    
+    background-color: yellow;
+}
+
+.tablelayer {
+    width: 49em;
+    border: thin solid #708090;
+    clear: none;
+	 margin-top: 4px;
+    padding: 5px; /*
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;*/
+}
+
+
+#navilayer {
+    width: 	15em;
+    height: 7.3em;
+	padding:1em;
+	border-right: thin solid #708090;
+	float: left;
+	color: Black;
+	background-color: #eeeeee;
+	font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	overflow:hidden;
+}
+a {
+	text-decoration: none;
+	color: Blue;
+}
+a:hover {
+	text-decoration: underline;
+}
+#bold {
+	font-weight: bold;
+}
+
+
+
+#container {
+    width: 50em;
+    height: 30em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25em; /*das ist die h?lfte der breite... nur im minusbereich*/
+    margin-top: -15em; /*das ist die h?lfte der h?he... nur im minusbereich*/
+	padding:1em;
+   border: thin solid #708090;
+	background-color: White;
+}
+
+.heading {
+	font-weight: bold;
+	background-color: #eeeeee;
+	}
+	
+	
+	
+td {
+	    font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+input, file, select {
+   border: 1px solid Gray;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 12px;
+}
+.buttons{
+	font-size: 12px;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+/* Hilfe Zeile */
+.tip {
+	position	: absolute;
+    visibility	: hidden;
+    width		: 40em; 
+	left		: 19em;
+    height		: 8em;
+    padding		: 1em; 
+    overflow	: hidden;
+    font-size	: 12px;
+    font-family	: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+.error {
+    font-size	: 12px;
+    font-family	: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    background-color:red;
+    color:white;
+    font-weight:bold;
+    margin-left:12em;;
+}
+a.errorlink {
+	color:lightblue;
+	text-decoration:none;
+}
+
+.status {
+	    font-size	: 12px;
+    font-family	: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    background-color:white;
+    color:green;
+    font-weight:bold;
+    margin-left:130px;
+}
+.fehler {
+	    font-size	: 12px;
+    font-family	: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    background-color:white;
+    color:red;
+    font-weight:bold;
+    margin-left:130px;
+}
+
+/*  - - - - - BUTTON  - - - - - */
+.examplebutton {
+	background-color:#FFFFF0;
+}
+
+.submitbutton {
+	background-color:lightgreen;
+}
+
+.resetbutton {
+	background-color:orange;
+}
