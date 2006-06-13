@@ -49,7 +49,7 @@ define("F_PATH", 		'functions/');			// functions path
 define("I_PATH", 		'include/');			// include path
 define("MYSQLFILE", 	'cbmysql.class.php');	// mysql.class.file
 define("DEBUGGERFILE", 	'cbdebug.class.php');	// debug.class.file
-define("DEBUGGER", 		true);					// logfile Debugger 1=on/0=off
+define("DEBUGGER", 		false);					// logfile Debugger 1=on/0=off
 define("INITFILE", 		'init.inc.php');		// initializer for variables
 define("DEFFILE", 		'def_html.inc.php');	// difinitions (html)
 
@@ -61,7 +61,7 @@ define("S_PATH", 		'include/smarty/');		// smarty path
 define("SMARTYFILE", 	'libs/Smarty.class.php');// smarty class file
 
 define("T_PATH", 		'templates/');			// old templates path
-
+define("INSTALLLINK",	'Haben Sie das System bereits <a href=\'install/\'>installiert?</a>');
 // no debug info from this methods/functions
 $hide_debug_from=array( "press_user:press_user",
 						"press_user:auth",
@@ -164,8 +164,8 @@ if($SQL->change_db($VAR['db']['dbase']))
 else {	die("<b>Auf die in der Konfigurationsdatei (".C_PATH.CONFIGFILE.") angegebene Datenbank (".$VAR['db']['dbase'].") besteht kein Zugriff. " .
 		"</b><p>Due to a configurational problem accessing the database is currently impossible." .
 		"<p>MySQL meldet: ".$SQL->error_no. "[".$SQL->error_msg."]" .
-				"</p><p>" .
-				"Haben Sie das System bereits <a href='install/'>installiert?</a>");}
+				"</p><p>" . INSTALLLINK
+				);}
 
 
 
@@ -230,8 +230,16 @@ if (in_array("debug", $TODO)) {
 	require I_PATH.DEBUGGERFILE;
 	
 	$DBG = new Debug(DEBUGGER, false);	//	0-debugger off / 1- debugger on | 1 file 4 1 ip:false
-	$DBG->filelink			= 1;		// show link to debug file in html page
+	if ($DBG->debugger==false && DEBUGGER==true) {
+		die("Debugger startup failed.<br>"
+			."Please deactivate debugging (init.php:52) or run install.<p>"
+			."Der Debugger konnte nicht gestartet werden.<br>" .
+			INSTALLLINK
+			);
+	}
 	
+	$DBG->filelink			= 1;		// show link to debug file in html page
+
 	$DBG->hide("init");				// functions not to show in the debug log
 	foreach($hide_debug_from as $m) {
 		$DBG->hide($m);	

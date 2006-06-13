@@ -20,13 +20,13 @@ require_once ("../include/init.inc.php");
  * und die neue Datenbank anlegen zu lassen.
  * Andernfalls muss $db2[create] und $create auf false gesetzt werden  
  */
-$db['user'] = "mpnq";			// Benutzername Datenbank
-$db['pass'] = "elo6dir";		// Passwort
+$db['user'] = "root";			// Benutzername Datenbank
+$db['pass'] = "rootpass";		// Passwort
 $db['dbg']	= 0; 				// 0=silent (debug mode of mysql-class) 
 
 /* database stuff */
 $db['server']	= "localhost";
-$db['dbase']	= "presse"; 	// Datenbank, die zu Testzwecken benutzt wird 
+$db['dbase']	= "test"; 	// Datenbank, die zu Testzwecken benutzt wird 
 								// (keine Schreiboperationen)
 
 /* Daten des unpreviligierten DB Nutzers */
@@ -34,14 +34,14 @@ $db2 = $db; 			// kopiere Rahmendaten (wie Server...)
 
 /* fuer previligierte Nutzer:  */
 $drop_olduser= init("drop_user","r",false);   // drop old user, if exist			
-$create		 = init("create_user","r",false); // create this user (for this db)		
+$create		 = init("create_user","r",true); // create this user (for this db)		
 
 /* Zugangsdaten unprev. Benutzer */
-$db2['user'] = init("user","r",$db['user']); //'"unipressuserd");
-$db2['pass'] = init("pass","r",$db['pass']); //"up9283");
+$db2['user'] = init("user","r","presse");
+$db2['pass'] = init("pass","r","ppdrt6_q");
 
-$db2['dbase'] = init("dbase","r",   "presse01");// name of database I should use or create
-$db2['create']= init("create_db","r",false);  // create database (false, if it already exists)
+$db2['dbase'] = init("dbase","r",   "presse");// name of database I should use or create
+$db2['create']= init("create_db","r",true);  // create database (false, if it already exists)
 $prefix		  = "";			// table prefix
 $db2['create_T']=init("create_t","r" ,true);	// create tables, true is recommented if no backup should be restored
 $db2['create_AU']=init("create_a","r",true);// create Adminuser (user. admin, pass: adminpass)
@@ -282,7 +282,7 @@ else echo GOOD;
 
 if($db2['create_T']){
 	echo "<br>Creating Tables ... ";
-		
+		$SQL->change_db($db2['dbase']);
 		include "database.php";
 		while(list(,$q)=each($table)) {
 		#	echo "<br>".$q;

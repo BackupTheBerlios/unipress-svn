@@ -1,11 +1,14 @@
 <?php
 /**
 * From toolbox: cbdebug.class.php 19 2005-12-01 15:58:32Z tuergeist
-* 
+* $Id$ 
 * Debugger - php class to survilance a php script
 *
-* @version 0.3.1
-* cahnges ro 0.3.1
+* @version 0.3.2
+* changes to 0.3.2
+*   # if debug-file not writeable, echo error and go on without debugging
+* 
+* changes ro 0.3.1
 *   # if enter_method gets a method name, this name is used (instead of auto-
 *     ;)
 * detected)
@@ -66,8 +69,8 @@
  *
  *
  * @author cbecker@nachtwach.de
- * @copyright Copyright (c) 2003-11-17
- * @version 0.3.0
+ * @copyright Copyright (c) 2003-11-17 -- 2006-06-13
+ * @version 0.3.2
  * @access public
  **/
 class Debug
@@ -153,7 +156,7 @@ class Debug
 	*
 	* @access private
 	**/
-	var $VERSION		=	"0.3.1";
+	var $VERSION		=	"0.3.2";
 
 	/**
 	* Debug::functions	method stack
@@ -254,7 +257,12 @@ class Debug
 			}
 			if (file_exists($this->filename) && !is_writable($this->filename)) die ("debug logfile ".$this->filename." is not writable (chmod to 777)");
 			
-			$filehandle		=	fopen($this->filename,$mode) or die("debug file init error");
+			$filehandle		=	fopen($this->filename,$mode); 
+			if ($filehandle==false) {
+				$this->debugger=false;
+				echo ("debug file init error. I can't write to <b>" . $this->filename . "</b> ");
+				return;
+			}
 			
 			fwrite($filehandle,"start debugmode (".strftime("%H:%M:%S %d.%m.%Y").")\n");
 			fwrite($filehandle,"caller IP: ".		$_SERVER['REMOTE_ADDR']."\n");

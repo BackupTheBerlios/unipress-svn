@@ -51,6 +51,7 @@ switch ($actual) {
     default:
 	case "main":
 		//echo XHTMLHEAD . $menu_links . XHTMLFOOT;
+		$DBG->send_message("Starte Hauptseite");
 		include (T_PATH."main.php");
 	break;
 	

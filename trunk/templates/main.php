@@ -2,7 +2,7 @@
 // $Id$
 // Startseite nach Anmeldung
 //
-require_once("include/updatemanager.php");
+//require_once("include/updatemanager.php");
 //
 $html['content']  = " 
 			<table summary=\"form table (as layout)\" width=\"100%\">
@@ -17,7 +17,9 @@ $html['content']  = "
 						
 						"Viel Spa&szlig;!" .
 				"</td></tr>" .
-				"<tr><td>" . updates() ."</td></tr>" .
+				"<tr><td> "
+				 //. updates()
+				  ."</td></tr>" .
 				"</table>";
 
 
