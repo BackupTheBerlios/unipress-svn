@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id$
+ * $Id:create_database.php 18 2006-03-20 12:50:53Z tuergeist $
  *
  * provides sql query to generate the database
  */

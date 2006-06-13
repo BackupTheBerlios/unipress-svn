@@ -5,7 +5,7 @@
  * init - file
  * <br>Initiates environment
  * 
- * @version 0.2.0 (09'2004, 11'2004, 06'2005)
+ * @version 0.2.0 (09'2004, 11'2004, 06'2005, 06'2006)
  * @copyright 2004 Christoph Becker <cbecker@nachtwach.de>
  * 
  * $Id$
@@ -41,7 +41,7 @@ $TODO = array("functions",     // set path to functions
 /* define localhosts IP for extra config-file, 
  * extra lokale Konfuguration für die Entwicklung
  * -> definierte IP Adresse für lok. Konf. */
-define("LOCALHOSTIP","127.0.0.1321");
+define("LOCALHOSTIP","127.0.0.1144"); //falsche IP? dann sollte wohl simuliert werden!
 
 /* define paths */
 define("F_PATH", 		'functions/');			// functions path
@@ -95,16 +95,11 @@ if (in_array("smarty", $TODO)) {
 }
 
 /* Path estimation */
-// check OS
-#if (eregi("^win", PHP_OS)) {
-	// Windows found
-	// automatic path determination
-	$PATH	=	substr(__FILE__, 0, strrpos( __FILE__, "\\")+1);		// Windows Server
-/*} else {
-	// non Windows, *NIX
-	$PATH = substr($_SERVER["SCRIPT_FILENAME"],0, strrpos($_SERVER["SCRIPT_FILENAME"], "/"));
-	//$PATH	=	"";
-}*/
+// automatic path determination
+$PATH	=	substr(__FILE__, 0, strrpos( __FILE__, "\\")+1);
+/*
+ $PATH = substr($_SERVER["SCRIPT_FILENAME"],0, strrpos($_SERVER["SCRIPT_FILENAME"], "/"));
+*/
 
 // check path
 if ($PATH=="") {
@@ -241,10 +236,6 @@ if (in_array("debug", $TODO)) {
 	foreach($hide_debug_from as $m) {
 		$DBG->hide($m);	
 	}
-
-#	$DBG->hide("press_user:press_user");
-#	$DBG->hide("press_user:auth");
-#	$DBG->hide("template:add_form_field");
 
 	$ERRLOG = new errorlog();
 	

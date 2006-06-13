@@ -1,5 +1,12 @@
 <?php
 // $Id$
+// lokaler Aufruf?
+if($_SERVER['REMOTE_ADDR']!="") 
+	die("Nur lokale Aufrufe erlaubt! ".
+		"Benutze \$php statiker.php an der Konsole oder als Cronjob");
+
+
+
 // Statische Seiten erzeugen
 error_reporting(E_ALL);
 require("init.php");
@@ -22,5 +29,7 @@ foreach($kuerzel as $institut) {
 	echo " - ".$institut."\n";
 	$PO->make_static($institut);  // dto schreibe cache file	
 }
-echo "cache refreshed\ndone.\n.";		
+echo "cache refreshed\ndone.\n.";	
+
+include ("init.php");
 ?>

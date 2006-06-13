@@ -58,7 +58,11 @@ class press_output{
 		if(!empty($res)) {
 			$head = wget($res[0]['head']);
 			$foot = wget($res[0]['foot']);
+			$fname = "cache/_cus_".$kuerzel.".html";
 			// schreibe doc mit headern
+			if (!is_writable($fname)) {
+				die ("\nEs fehlen ihnen die Rechte, um $fname schreiben zu duerfen! \ndied.\n");
+			}
 			$fh = fopen("cache/_cus_".$kuerzel.".html", "w");
 			fputs($fh, $head.$data.$foot);
 			fclose($fh);
