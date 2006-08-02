@@ -1,0 +1,224 @@
+%
+% UniPress Dokumentation
+% $Revision$ 
+% $Version$
+% $ID$
+%
+\documentclass[a4paper,10pt,twoside]{article}
+\usepackage{ucs}			% for utf8
+\usepackage[utf8]{inputenc}	% utf8 input encoding
+\usepackage{ngerman}		% new german orthography
+
+%Grafiken
+\usepackage[dvips]{graphics}
+\usepackage{epsfig}			% for eps grafix
+\usepackage{myFig} 			% special grafix handling, see myFig.sty for help
+
+% Quelltext
+\usepackage{listings}
+
+%Footnotes without Tabs
+\usepackage[bottom,hang]{footmisc}
+\setlength{\footnotemargin}{0pt}
+
+%opening
+\title{
+	UniPress Dokumentation\\
+	Version 0.0.1\\
+}
+\author{
+	Christoph Becker \\
+	mail@ch-becker.de
+}
+
+\begin{document}
+\maketitle
+\section{Installation}
+ Nach dem Entpacken des Quellcodes (mit \texttt{tar
+ xzf <datei.tgz>}) kann UniPress bereits im Browser aufgerufen werden.\\
+ Es erscheint eine Fehlermeldung (kein Zugriff auf die Datenbank) und die
+ Nach\-frage, ob das System bereits installiert ist. Diesem Link folgt man, um auf
+ eine Über\-sichts\-seite zu gelangen. Hier werden alle Abhängigkeiten für die
+ Installation geprüft. 
+
+ \subsection{Details zur Installationsprüfung}
+ Man sollte sich hier von oben Durcharbeiten. Nachfolgend
+ ein paar Hinweise zu den gestesteten Daten:
+ \begin{description}
+	\item[Betriebssystem] dient nur der Information. Bei Windows-Systemen kann es
+	zu unbekannten Wechselwirkungen mit dem Rechtemanagement kommen.
+%
+	\item[PHP-Version] Diese sollte mindesten 4.4.0 betragen, da bei älteren
+	Versionen kein einwandfreies Funktionieren gesichert ist. Letztendlich besteht
+	auch ein Sicherheitsproblem im Einsatz alter Serversoftware.
+%
+	\item[Dateisystem] Das Script versucht automatisch den aktuellen lokalen Pfad
+	zu ermitteln, dies ist für einige Schreibvorgänge notwendig. Ebenso werden
+	verschiedene Verzeichnisse geprüft, ob Schreibrechte vorhanden sind. Das
+	\textsf{log/}-Verzeichnis ist für die interne \textsc{Debug}-Funktion notwendig,
+	in \textsf{upload/} werden die Artikel abgelegt und nach \textsf{cache/} werden die
+	statischen HTML Dateien generiert. Schreibrechte für die Konfigurationsdatei
+	\textsf{main.conf.ini} sind für das die Installation abschließende Sichern der
+	Konfiguration nötig und können nach der Installation wieder entfernt werden.
+    Um Ihnen die Arbeit der Rechtevergabe abzunehmen, existiert ein Script im
+    Wurzel\-ver\-zeichnis der installation, \textsf{install.sh}. Rufen Sie es
+    einfach auf. 
+    %
+	\item[Datenbankverbindung] Die Verbindung zur Datenbank ist notwendig um das
+	System zu installieren und in Betrieb zu halten. Zunächst wird auf das
+	Vorhandensein entsprechender PHP-Module getestet und danach die Zu\-gangs\-da\-ten.
+%
+	\item[PHP-Modul] Kann hier KEIN Modul gefunden werden, müssen Sie dieses in
+	Ihrer \textsf{php.ini}-Datei (meist in \textsf{/etc/php5/apache2/} zu finden)
+	ändern. Konsultieren sie hierzu das PHP-Handbuch.
+	%
+	\item[Verbindung und Datenbankstatus] sind zum Teil abhängig davon, ob sie mit
+	einem previvligiertem Datenbank-Account installieren, oder nicht. Editieren Sie
+	hierfür mit einem Editor Ihrer Wahl die Datei \textsf{index.php}.
+	Details zu dieser Datei finden Sie im nächsten Abschnitt, \textbf{install/index.php}.
+ \end{description}
+%
+%
+%
+ \subsection{install/index.php}
+   In dieser Datei sind alle wichtigen Daten für den weiteren Zugriff zu
+   hinterlegen. Ab Zeile 20 geben Sie bitte die Zugangsdaten für die Datenbank
+   ein. Existiert noch keine entsprechende Datenbank, Sie besitzen aber einen
+   previligierten Datenbankaccount (root), so tragen Sie diese Daten hier ein.\\
+   Ab Zeile 25 wird der Datenbankserver (in der Regel \textsf{localhost}) und
+   der zu nutzende Datenbankname abgefragt. Geben Sie hier bitte den
+   Datenbanknamen ein, der Ihnen von Ihrem Admin zugeteilt wurde oder wählen Sie
+   selbst (prev. Account).\\
+   Achten Sie darauf, dass \texttt{\$db2['create\_T']} und
+   \texttt{\$db2['create\_AU']} jeweils den Wert \texttt{true} annehmen um
+   sowohl alle nötigen Tabellen, als auch den Administrator anlegen zu lassen.\\
+   An dieser Stelle sind für den unpreviligierten Nutzer alle Möglichkeiten
+   erschöpft und er kann die Installationsseite erneut aufrufen. Sind alle
+   Voraussetzungen erfüllt, so erscheint am Ende der Seite ein Link zum
+   fortsetzen der Installation. Können Sie nicht alle Fehler beheben, denken
+   aber, dass dieser Fehler unerheblich ist, so hängen Sie in der Adresszeile
+   Ihrers Browsers folgende Argumente an \texttt{?installation=start}.
+   
+   % 
+   %
+ \subsection{Extras für previligierte Accounts}
+  \begin{description}
+ 	\item[Nutzer löschen] In Zeile 31 können Sie einen vorhandenen Datenbanknutzer
+	löschen lassen, ändern Sie dazu \texttt{false} in \texttt{true} oder übergeben
+	Sie beim Scriptaufruf im Browser \texttt{install/index.php?drop\_user=true}.
+	%
+	\item[unpreviligierten Nutzer erstellen] Um dies zu automatisieren, setzen Sie
+	\texttt{\$create} in Zeile 33 auf \texttt{true} oder übergeben Sie 
+	\texttt{create\_user=true}
+	via GET im Browser. Analog zu Nutzer löschen.
+	%
+	\item[Zugangsdaten unpreviligierter Benutzer] können ab Zeile 36 hinterlegt
+	werden. Wenn dieser Benutzer angelegt werden soll. Dazu muss
+	\texttt{create\_user=true} sein.
+	
+  \end{description}
+%
+ \subsection{Post-Install}
+   Nach der Installation sollten Sie sicherstellen, dass folgende Dinge
+   passieren: 
+   \begin{itemize}
+     \item Löschen des Installationsverzeichnisses oder das entziehen der Rechte
+     (chmod 000 install)
+     \item Ändern des Besitzers von \textsf{cache} auf den Besitzer des Cronjobs
+     und Ändern der Rechte auf 0700.
+     \item Abschalten der Debugfunktion nach erfolgreichem Test
+     (\texttt{init.php, Zeile 52 auf false setzen})
+     \item 
+   \end{itemize}
+    %
+%
+\section{Statische Dateien}
+Als \textit{Statische Dateien} werden nachfolgend die Listen der Artikel
+bezeichnet, die als statische HTML Dateien, also nicht-interaktiv, erzeugt
+werden. \\
+Um diese Dateien erzeugen zu können, muss ein \textit{Cronjob} eingerichtet
+werden, der zu festgelegten Zeiten (1.ooUhr früh) die Datei
+\textsf{statiker.php} im Wurzelverzeichnis aufruft. So ein Eintrag wie folgt
+aussehen:
+%
+{\tiny
+	\begin{lstlisting}
+	# /etc/cron.d/presscache - generates cache files
+	# runs every day at 1.00AM
+	* 1 * * *     root   /usr/bin/php /var/www/unipress/statiker.php
+	\end{lstlisting}
+}
+%
+\subsection{Cache}
+Dadurch werden die statischen HTML Dateien in \textsf{cache/} erstellt. Diese 
+sind nach folgendem Schema benannt worden. \\
+Das Prefix \textsf{\_all\_} steht für \textit{allgemein}. Diese Dateien enthalten
+keinen HTML-Kopf beziehungsweise Fuß. Sie können mit Hilfe der PHP-Funktion 
+\textsc{include} oder via SSI in ein bestehendes Layout integriert werden.
+Dateien, beginnend mit \textsf{\_cus\_} enthalten den vom Admin im Abschnitt 
+Bereiche festgelegten Kopf und Fuß. Somit sind sie eigenständige, vollständige 
+HTML Dokumente und können direkt aufgerufen werden\footnote{zum Beispiel via 
+iFrames}.\\
+Um auf diese Dateien zugreifen zu können, ist nur das Kürzel des entsprechenden
+Bereiches notwendig. Für ein Bereich (Institut) mit dem Kürzel AB, wird einmal
+eine \textsf{\_all\_AB.html} und eine \textsf{\_cus\_AC.html} Datei erstellt.
+
+\subsection{Cache Templates}
+In \textsf{t\_cache} befinden sich Templates für die Erstellung individueller
+Auflistungen von Presseeinträgen. So ist es möglich, für jeden Bereich ein
+anderes Aussehen zu erzielen. Ist keine spezielle Datei für einen Bereich
+hinterlegt, so wird immer auf \textsf{\_all\_default.thtml} zurückgegriffen. Die
+Syntax ist selbstklärend und kann aus dem Beispiel abgeleitet werden.
+
+\section{Suche}
+ Die Suche befindet sich noch im Teststadium und ist somit noch recht
+ unausgereift. \\ 
+ Der Pfad zur Suchseite lautet \textsf{http://<Installationsadresse>/suche.php}.
+
+
+\section{Bekannte Probleme}
+ \subsection{Benutzer ändern}
+  Ein nicht-previligierter Benutzer kann nachträglich nicht in die lokale 
+  Datenbank überführt werden.\\
+  Das Löschen von Benutzern ist derzeitig ebenfalls nicht möglich. Sollen ihm
+  die Rechte entzogen werden, entferne man alle Zuordnungen zu Bereichen.
+  %
+ \subsection{Admin ist kein Admin mehr}
+  Unter bisher ungeklärten Umständen ist es möglich, dass der Administrator, 
+  ``admin'',  seine Rechte verliert und nur noch als gewöhnlicher Nutzer 
+  agieren kann. Um dies zu beheben muss die Datenbank manuell geändert werden.\\
+  An der Konsole ist die mit Hilfe des mysql-Clients im Browser evtl. mit 
+  PHP"-My"-Admin möglich. Danach besitzt der Admin wieder alle Rechte.\\
+  Beispiel:
+%
+  {\tiny
+	\begin{lstlisting}
+  mysql -u<user> -p<pass> [-h<host>] > use <unipress_datenbank>; 
+  Database changed 
+  > insert into press_admins (id) values (1); 
+  Query OK, 1 row affected (0.01 sec) 
+  > quit;
+	\end{lstlisting}
+  }
+ \subsection{Passwort vergessen}
+  Für Benutzer die in der lokalen Benutzerdatenbank verwaltet werden, kann das 
+  Passwort bisher nur direkt in der Datenbank geändert werden.\\
+  {\tiny
+	\begin{lstlisting}
+  mysql -u<user> -p<pass> [-h<host>] > use <unipress_datenbank>; 
+  Database changed 
+  > update press_user set pass=sha1('mypass') where name='admin'; 
+  Query OK, 1 row affected (0.00 sec) Rows matched: 1  Changed: 1  Warnings: 0 
+  > quit;
+	\end{lstlisting}
+  } Dieses SQL-Query ändert das Passwort für den Benutzer ``admin''. Nach der 
+  Installation ist das Passwort ``adminpass'' vergeben worden.
+%
+%
+%
+\section{Kontakt}
+ Vorschläge, Wünsche, Ideen etc. können auf
+ \textsf{https://developer.berlios.de/projects/unipress/} hinterlegt oder 
+  an cbecker@nachtwach.de mit dem Betreff ``UniPress'' gesendet werden.
+ 
+\end{document}

@@ -1,0 +1,25 @@
+
+% Abbildungen besser einbinden können
+% 5 Argumente, wobei das erste freilwillig ist: 
+%  1. Breite des Bildes (Standard \columnwidth), 
+%  2. Dateiname, 3. Titel, 4. Bildunterschrift und 5. Verweisname (ohne img:)
+% \myFig[5cm]{psdatei.ps}{Übersicht}{Diese Bild zeigt schlicht und einfach alles}{alles} 
+% oder ohne explizit die Breite zu setzen 
+% \myFig{psdatei.ps}{Übersicht}{Diese Bild zeigt schlicht und einfach alles}{alles}
+
+% ols was % \newcommand{\myFig}[5][\columnwidth]{
+\newcommand{\myFig}[5][0.75\textwidth]{ 
+ \begin{figure}[htbp]\begin{center}
+ \includegraphics[width=#1]{#2}
+ \caption{#3}
+ \label{img:#5}
+ \small{\textit{#4}}
+ \end{center}\end{figure}
+}
+
+% Referenz auf Abb
+% \fig{alles} -> Abbildung 1
+
+\newcommand{\fig}[1]{Abbildung \ref{img:#1}\xspace}
+
+
