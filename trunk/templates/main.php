@@ -16,6 +16,11 @@ $html['content']  = "
 						"Sie bitte auf 'Abmelden' oder schlie&szlig;en Sie Ihren Browser.</p>" .
 						
 						"Viel Spa&szlig;!" .
+						"<p>&nbsp;</p>" .
+						"Fehler (Bugs) melden Sie bitte über folgenden Link: " .
+						"<a href='http://developer.berlios.de/bugs/?group_id=5318' target='_blank'>" .
+						"http://developer.berlios.de/bugs/?group_id=5318</a> oder direkt als " .
+						" <a href='http://developer.berlios.de/sendmessage.php?touser=20628'>Nachricht an den Entwickler</a>." .
 				"</td></tr>" .
 				"<tr><td> "
 				 //. updates()
